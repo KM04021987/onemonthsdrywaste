@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Receiver's profile page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container mt-3">
+    <div class="d-flex flex-row-reverse">
+        <form method="POST" action="/logout">
+            <button type="submit" class="btn btn-primary">Log out</button>
+        </form>
+    </div>
+    <ul class="nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/rprofile">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/search-pickup">Search Pickup Requests</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/search-donors">Search Donors</a>
+        </li>
+    </ul>
+    <hr>
+</div>
+
+
+<form method="post" action="/list-of-receivers">
+    <br>
+    <h5>Please enter country, state and Pin or Zip to search nearest waste collector/receiver.</h5>
+    <br>
+
+    <div class="form-row">
+        <div class="form-group col-md-1">
+            <label>Country:</label>
+        </div>
+        <div class="form-group col-md-3">
+            <select id="countrySelect1" class="form-control" name="country" onchange="makeSubmenu1(this.value)">
+                <option selected></option>
+                <option>India</option>
+                <option>United States</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-1">
+            <label>State:</label>
+        </div>
+        <div class="form-group col-md-3">
+            <select id="stateSelect1" class="form-control" name="state">
+                <option selected></option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-1">
+            <label>PIN or ZIP</label>
+        </div>
+        <div class="form-group col-md-3">
+            <input type="text" class="form-control" id="pin" name="pin" required>
+        </div>
+    </div>
+    <input type="hidden" id="account" name="account" value="<%=account%>">
+
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+
+
+</body>
+</html>
