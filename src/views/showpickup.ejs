@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Receiver's profile page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--Bootstrap-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+
+<style>
+.accordion {
+    background-color: rgb(244, 250, 252);
+    color: blue;
+    cursor: pointer;
+    padding: 10px;
+    padding-left: 30px;
+    width: 100%;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+    transition: 0.4s;
+    border: 1px solid rgb(222, 227, 233);
+    border-radius: 5px; 
+}
+
+.accordion:hover {
+    background-color: rgb(229, 241, 247); 
+}
+
+.panel {
+    padding: 10px;
+    display: none;
+    background-color: white;
+    overflow: hidden;
+    border: 1px solid rgb(230, 235, 240);
+    border-radius: 5px;
+    padding-left: 20px;
+}
+</style>
+            
+</head>
+<body>
+
+<div class="container mt-3">
+    <div class="d-flex flex-row-reverse">
+        <form method="POST" action="/logout">
+            <button type="submit" class="btn btn-primary">Log out</button>
+        </form>
+    </div>
+    <ul class="nav">
+        <li class="nav-item">
+            <a style="font-weight: bold; text-decoration: underline;" class="nav-link" href="/rprofile">Profile</a>
+        </li>
+        <li class="nav-item">
+            <a style="font-weight: bold; text-decoration: underline;" class="nav-link" href="/get-search-pickup-form/<%=receiveraccount%>">Search Pickup Requests</a>
+        </li>
+        <li class="nav-item">
+            <a style="font-weight: bold; text-decoration: underline;" class="nav-link" href="/get-search-donors/<%=receiveraccount%>">Search Donors</a>
+        </li>
+    </ul>
+    <hr>
+</div>
+
+<div class="container">
+
+    <br>
+    <form method="GET" action="/get-search-pickup-form/<%=receiveraccount%>">
+        <button type="submit" class="btn btn-primary btn-sm">Click Here to Search with Other Location</button>
+    </form>
+    <br>
+    <div>
+        <%
+        if(userData.length!=0){
+            var i=1;
+            userData.forEach(function(data){
+        %>
+        <button class="accordion">Pickup Request #<%=data.PICKUP_REQUEST_NO%> [Created on <%= data.ADD_TS.substring(0,10)%>]</button>
+        <div class="panel">
+            <div class="row">
+                <div class="col-sm-3"><h6>Recyclable Items</h6></div>
+                <div class="col-sm-9">
+                    Plastic Bottle  : <%=data.PLASTIC_BOTTLE%><br>
+                    Plastic Wrapper : <%=data.PLASTIC_WRAPPER%><br>
+                    Glass Bottle    : <%=data.GLASS_BOTTLE%><br>
+                    Metal Cans      : <%=data.METAL_CANS%><br>
+                    Paper Waste     : <%=data.PAPER_WASTE%><br>
+                    Other Waste     : <%=data.OTHER_WASTE%>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-sm-3"><h6>Pickup Location</h6></div>
+                <div class="col-sm-9"><%=data.DONOR_ADDRESS%><br><%=data.DONOR_CITY%>, <%=data.DONOR_STATE%><br><%=data.DONOR_COUNTRY%> <%=data.DONOR_PIN_OR_ZIP%></div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-sm-3"><h6>Contact Number</h6></div>
+                <div class="col-sm-9"><%=data.DONOR_PHONE_NO%></div>
+            </div>
+            <br>
+
+            <div class="row">
+                &nbsp;&nbsp;&nbsp;<p>If you are interested to contact the Donor, please send a note in the below description area, and click on "Send Message" Button.</p>
+            </div>
+
+            <form method="POST" action="/send-message/<%=receiveraccount%>">
+                <div class="form-group">
+                    <textarea id="messageContent" name="messageContent" class="form-control" placeholder="Type your message(Maximum 250 character)"></textarea>
+                </div>
+                
+                <input type="hidden" id="donoraccount" name="donoraccount" value="<%=data.DONOR_ACCOUNT%>">
+                <input type="hidden" id="country" name="country" value="<%=country%>">
+                <input type="hidden" id="state" name="state" value="<%=state%>">
+                <input type="hidden" id="pin" name="pin" value="<%=pin%>">
+                <button type="submit" class="btn btn-outline-primary btn-sm" onClick="showMessage()">Send Message</button>  
+            </form>
+            <br>
+            <br>
+
+        </div>
+        <%  i++; }) %>
+        <% } else{ %>
+        <h5 colspan="7">No pickup request is found!</h5>
+        <% } %>
+        <br>
+        <br>
+        <br>
+    </div>
+</div>
+
+<!-- Script for Accordion starts-->
+<script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+          panel.style.display = "none";
+        } else {
+          panel.style.display = "block";
+        }
+      });
+    }
+</script>
+<!-- Script for Accordion ends-->
+
+<script type="text/javascript">
+    function showMessage() {
+        alert("Your message will be posted to the Donor!");
+    }
+</script>
+
+</body>
+</html>

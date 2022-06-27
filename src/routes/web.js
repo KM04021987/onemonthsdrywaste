@@ -61,7 +61,9 @@ let initWebRoutes = (app) => {
     router.delete('/delete-pickup', donorProfileController.deletePickupById);
     router.post('/list-of-receivers', donorProfileController.getReceiverList);
 
-    router.get("/search-pickup", receiverProfileController.getSearchPickup);
+    router.get('/get-search-pickup-form/:id', receiverProfileController.getSearchPickupForm);
+    router.post('/show-list-of-pickup/:id', receiverProfileController.showListOfPickup);
+    router.post('/send-message/:id', receiverProfileController.sendMessage);
     
     return app.use("/", router);
 };
