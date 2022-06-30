@@ -13,31 +13,34 @@ let handleDonorPage = async (req, res) => {
     const jsonpin_or_zip = jsonParseObj.PIN_OR_ZIP
     const jsonaddress = jsonParseObj.ADDRESS
 
-    pickuprequestService.extractPickupRequest(jsonaccount).then((data) => {
-        return res.render("donorprofile.ejs",{
-            account: jsonaccount,
-            fullname: jsonfullname,
-            phone: jsonphone_no,
-            country: jsoncountry,
-            state: jsonstate,
-            city: jsoncity,
-            pin: jsonpin_or_zip,
-            address: jsonaddress,
-            userData: data
-        });
-    }).catch(error => {
-        console.log('error in handleDonorPage')
+    return res.render("donorprofile.ejs",{
+        donoraccount: jsonaccount,
+        fullname: jsonfullname,
+        phone: jsonphone_no,
+        country: jsoncountry,
+        state: jsonstate,
+        city: jsoncity,
+        pin: jsonpin_or_zip,
+        address: jsonaddress
     });
 };
 
-let createPickupRequest = async (req, res) => {
-    console.log('donorProfileController: createPickupRequest')
-    const jsonData = JSON.stringify(req.user)
-    const jsonParseObj = JSON.parse(jsonData)
-    const jsonaccount = jsonParseObj.ACCOUNT
+
+let getRequestANewPickupForm = async (req, res) => {
+    console.log('donorProfileController: getRequestANewPickupForm')
+    const donoraccount = req.params.id
+    return res.render("donorrequestanewpickup.ejs", {
+        donoraccount: donoraccount
+    })
+}
+
+let postNewPickupRequest = async (req, res) => {
+    console.log('donorProfileController: postNewPickupRequest')
+
+    const donoraccount = req.params.id
     //create a pickup request
     let pickupRequest = {
-        account: jsonaccount,
+        donoraccount: donoraccount,
         plasticbottle: req.body.plasticbottle,
         plastcwrapper: req.body.plastcwrapper,
         glassbottle: req.body.glassbottle,
@@ -51,13 +54,38 @@ let createPickupRequest = async (req, res) => {
         address: req.body.address,
         phone: req.body.phone
     };
-    try {
-        await pickuprequestService.createPickupRequest(pickupRequest);
-        return res.redirect("/dprofile");
-    } catch (err) {
-        req.flash("errors", err);
-        return res.redirect("/dprofile");
-    }
+    await pickuprequestService.createPickupRequest(pickupRequest).then(() => {
+        pickuprequestService.getPickupRequestNumber(donoraccount).then((data) => {
+            const jsonData = JSON.stringify(data)
+            const removebracket1 = jsonData.replace('[','')
+            const removebracket2 = removebracket1.replace(']','')
+            const jsonParseobj = JSON.parse(removebracket2)
+            const pickupRequestNumber = jsonParseobj.PICKUP_REQUEST_NO
+
+            return res.render("donorpostnewpickuprequest.ejs", {
+                donoraccount: donoraccount,
+                pickupRequestNumber: pickupRequestNumber
+            })
+        }).catch(error => {
+            console.log("error while fetching pickup request")
+        });
+    }).catch(error => {
+        console.log("error while creating a new pickup request")
+    });
+};
+
+let getRequestsHistory = async (req, res) => {
+    console.log('donorProfileController: getRequestsHistory')
+    const donoraccount = req.params.id
+
+    pickuprequestService.extractPickupRequest(donoraccount).then((data) => {
+        return res.render("donorrequestshistory.ejs",{
+            donoraccount: donoraccount,
+            userData: data
+        });
+    }).catch(error => {
+        console.log('error in getRequestsHistory')
+    });
 };
 
 let getEditPickup = async (req, res) => {
@@ -83,7 +111,7 @@ let getEditPickup = async (req, res) => {
     const jsonDONOR_ADDRESS = jsonParseobj.DONOR_ADDRESS
     const jsonDONOR_PHONE_NO = jsonParseobj.DONOR_PHONE_NO
 
-    return res.render("editpickup.ejs", {
+    return res.render("donoreditpickup.ejs", {
         PICKUP_REQUEST_NO: jsonPICKUP_REQUEST_NO,
         DONOR_ACCOUNT: jsonDONOR_ACCOUNT,
         PLASTIC_BOTTLE: jsonPLASTIC_BOTTLE,
@@ -111,7 +139,7 @@ let putEditPickup = async (req, res) => {
     const jsonaccount = jsonParseObj.ACCOUNT
     try {
         let item = {
-            account: jsonaccount,
+            donoraccount: jsonaccount,
             requestno: req.body.id,
             plasticbottle: req.body.plasticbottle,
             plastcwrapper: req.body.plastcwrapper,
@@ -153,16 +181,16 @@ let deletePickupById = async (req, res) => {
 
 let getReceiverList = async (req, res) => {
     console.log('donorProfileController: getReceiverList')
-    let account = req.body.account
+    let donoraccount = req.body.account
     let findByInfo = {
         country: req.body.country,
         state: req.body.state,
         pin: req.body.pin
     };
     await pickuprequestService.getReceiverList(findByInfo).then((data) => {
-    return res.render("listofreceivers.ejs", {
+    return res.render("donorlistofreceivers.ejs", {
         userData: data,
-        donoraccount: account
+        donoraccount: donoraccount
     })
     }).catch(error => {
     console.log('error while finding receiver info')
@@ -171,7 +199,12 @@ let getReceiverList = async (req, res) => {
 
 module.exports = {
     handleDonorPage: handleDonorPage,
-    createPickupRequest: createPickupRequest,
+
+    getRequestANewPickupForm: getRequestANewPickupForm,
+    postNewPickupRequest: postNewPickupRequest,
+
+    getRequestsHistory: getRequestsHistory,
+    
     getEditPickup: getEditPickup,
     putEditPickup: putEditPickup,
     deletePickupById: deletePickupById,

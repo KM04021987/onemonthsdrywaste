@@ -13,7 +13,7 @@ let handleReceiverPage = async (req, res) => {
     const jsonpin_or_zip = jsonParseObj.PIN_OR_ZIP
     const jsonaddress = jsonParseObj.ADDRESS
     return res.render("receiverprofile.ejs",{
-        account: jsonaccount,
+        receiveraccount: jsonaccount,
         fullname: jsonfullname,
         phone: jsonphone_no,
         country: jsoncountry,
@@ -27,7 +27,7 @@ let handleReceiverPage = async (req, res) => {
 let getSearchPickupForm = async (req, res) => {
     console.log('receiverProfileController: getSearchPickupForm')
     const receiveraccount = req.params.id
-    return res.render("searchpickup.ejs", {
+    return res.render("receiversearchpickup.ejs", {
         receiveraccount: receiveraccount
     })
 }
@@ -42,7 +42,7 @@ let showListOfPickup = async (req, res) => {
     const RECEIVER_PIN_OR_ZIP = req.body.pin
 
     pickuprequestService.getPickupList(RECEIVER_COUNTRY, RECEIVER_STATE, RECEIVER_PIN_OR_ZIP).then((data) => {
-    return res.render("showpickup.ejs", {
+    return res.render("receivershowpickup.ejs", {
         userData: data,
         receiveraccount: receiveraccount,
         country: RECEIVER_COUNTRY,
@@ -64,7 +64,7 @@ let sendMessage = async (req, res) => {
     const RECEIVER_PIN_OR_ZIP = req.body.pin
     await pickuprequestService.saveReceiversMessage(donoraccount, receiveraccount, messageContent).then(() => {
         pickuprequestService.getPickupList(RECEIVER_COUNTRY, RECEIVER_STATE, RECEIVER_PIN_OR_ZIP).then((data) => {
-            return res.render("showpickup.ejs", {
+            return res.render("receivershowpickup.ejs", {
                 userData: data,
                 receiveraccount: receiveraccount,
                 country: RECEIVER_COUNTRY,

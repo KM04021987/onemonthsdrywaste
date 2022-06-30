@@ -1,7 +1,6 @@
 function editPickup() {
     console.log('editPickup')
     $('#btnEditPickup').on('click', function(e) {
-        console.log('editPickup')
         let pickupId = $(this).data('pickup-id');
 
         let formData = new FormData($('form#formEditPickup')[0]);
@@ -11,7 +10,6 @@ function editPickup() {
             for (let pair of formData.entries()) {
                 data[pair[0]] = pair[1]
             }
-            console.log(data)
             handleEditPickup(data);
     });
 }

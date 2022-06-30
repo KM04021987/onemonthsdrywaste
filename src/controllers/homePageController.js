@@ -1,41 +1,41 @@
 let getHomePage = (req, res) => {
     console.log('homePageController: getHomePage')
-    return res.render("homepage.ejs", {
+    return res.render("home.ejs", {
         errors: req.flash("errors")
     });
 };
 
 let getAboutPage = (req, res) => {
     console.log('homePageController: getAboutPage')
-    return res.render("about.ejs", {
+    return res.render("homeabout.ejs", {
         errors: req.flash("errors")
     });
 };
 
 let getRecyclableitemsPage = (req, res) => {
     console.log('homePageController: getRecyclableitemsPage')
-    return res.render("recyclableitems.ejs", {
+    return res.render("homerecyclableitems.ejs", {
         errors: req.flash("errors")
     });
 };
 
 let getStepstofollowPage = (req, res) => {
     console.log('homePageController: getStepstofollowPage')
-    return res.render("stepstofollow.ejs", {
+    return res.render("homestepstofollow.ejs", {
         errors: req.flash("errors")
     });
 };
 
 let getPrivacyPage = (req, res) => {
     console.log('homePageController: getPrivacyPage')
-    return res.render("Privacy.ejs", {
+    return res.render("homeprivacy.ejs", {
         errors: req.flash("errors")
     });
 };
 
 let getFaqPage = (req, res) => {
     console.log('homePageController: getFaqPage')
-    return res.render("faq.ejs", {
+    return res.render("homefaq.ejs", {
         errors: req.flash("errors")
     });
 };

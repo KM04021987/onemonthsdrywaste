@@ -7,7 +7,7 @@ let createPickupRequest = (data) => {
     return new Promise(async (resolve, reject) => {
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
-                conn.query("INSERT INTO "+process.env.DB_SCHEMA+".pickup_request(DONOR_ACCOUNT, PLASTIC_BOTTLE, PLASTIC_WRAPPER, GLASS_BOTTLE, METAL_CANS, PAPER_WASTE, OTHER_WASTE, DONOR_COUNTRY, DONOR_STATE, DONOR_CITY, DONOR_PIN_OR_ZIP, DONOR_ADDRESS, DONOR_PHONE_NO) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", [data.account, data.plasticbottle, data.plastcwrapper, data.glassbottle, data.metalcans, data.paperbox, data.others, data.country, data.state, data.city, data.pin, data.address, data.phone], function(err, rows) {
+                conn.query("INSERT INTO "+process.env.DB_SCHEMA+".pickup_request(DONOR_ACCOUNT, PLASTIC_BOTTLE, PLASTIC_WRAPPER, GLASS_BOTTLE, METAL_CANS, PAPER_WASTE, OTHER_WASTE, DONOR_COUNTRY, DONOR_STATE, DONOR_CITY, DONOR_PIN_OR_ZIP, DONOR_ADDRESS, DONOR_PHONE_NO) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", [data.donoraccount, data.plasticbottle, data.plastcwrapper, data.glassbottle, data.metalcans, data.paperbox, data.others, data.country, data.state, data.city, data.pin, data.address, data.phone], function(err, rows) {
                     if (err) {
                         reject(false)
                     }
@@ -17,14 +17,35 @@ let createPickupRequest = (data) => {
     });
 };
 
-let extractPickupRequest = (account) => {
+let getPickupRequestNumber = (donoraccount) => {
+    console.log('pickuprequestService: getPickupRequestNumber')
+    return new Promise((resolve, reject) => {
+        try {
+            ibmdb.open(connStr, function (err, conn) {
+                if (err) throw err;
+                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE donor_account=? ORDER BY PICKUP_REQUEST_NO DESC fetch first 1 row only with ur;", [donoraccount], function(err, rows) {
+                    if (err) {
+                        reject(err)
+                    }
+                    let data = rows;
+                    resolve(data);
+                })
+            });
+        } catch (err) {
+            reject(err);
+        }
+    });
+};
+
+let extractPickupRequest = (donoraccount) => {
     console.log('pickuprequestService: extractPickupRequest')
     return new Promise((resolve, reject) => {
         try {
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
-                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE donor_account=? ORDER BY PICKUP_REQUEST_NO DESC with ur;", [account], function(err, rows) {
+                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE donor_account=? ORDER BY PICKUP_REQUEST_NO DESC with ur;", [donoraccount], function(err, rows) {
                     if (err) {
+                        console.log(err)
                         reject(err)
                     }
                     let data = rows;
@@ -63,7 +84,7 @@ let updatePickupInfo = (data) => {
     return new Promise(async (resolve, reject) => {
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
-                conn.query("UPDATE "+process.env.DB_SCHEMA+".pickup_request SET DONOR_ACCOUNT = ?, PLASTIC_BOTTLE = ?, PLASTIC_WRAPPER= ?, GLASS_BOTTLE= ?, METAL_CANS= ?, PAPER_WASTE= ?, OTHER_WASTE= ?, DONOR_COUNTRY= ?, DONOR_STATE= ?, DONOR_CITY= ?, DONOR_PIN_OR_ZIP= ?, DONOR_ADDRESS= ?, DONOR_PHONE_NO= ? where pickup_request_no = ?;", [data.account, data.plasticbottle, data.plastcwrapper, data.glassbottle, data.metalcans, data.paperbox, data.others, data.country, data.state, data.city, data.pin, data.address, data.phone, data.requestno], function(err, rows) {
+                conn.query("UPDATE "+process.env.DB_SCHEMA+".pickup_request SET DONOR_ACCOUNT = ?, PLASTIC_BOTTLE = ?, PLASTIC_WRAPPER= ?, GLASS_BOTTLE= ?, METAL_CANS= ?, PAPER_WASTE= ?, OTHER_WASTE= ?, DONOR_COUNTRY= ?, DONOR_STATE= ?, DONOR_CITY= ?, DONOR_PIN_OR_ZIP= ?, DONOR_ADDRESS= ?, DONOR_PHONE_NO= ? where pickup_request_no = ?;", [data.donoraccount, data.plasticbottle, data.plastcwrapper, data.glassbottle, data.metalcans, data.paperbox, data.others, data.country, data.state, data.city, data.pin, data.address, data.phone, data.requestno], function(err, rows) {
                     if (err) {
                         console.log(err)
                         reject(false)
@@ -151,6 +172,7 @@ let saveReceiversMessage = (donoraccount, receiveraccount, messageContent) => {
 
 module.exports = {
     createPickupRequest: createPickupRequest,
+    getPickupRequestNumber: getPickupRequestNumber,
     extractPickupRequest: extractPickupRequest,
     getPickupForEditPage: getPickupForEditPage,
     updatePickupInfo: updatePickupInfo,

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Donor's profile page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--Bootstrap-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+<style>
+.accordion {
+  background-color: rgb(244, 250, 252);
+  color: blue;
+  cursor: pointer;
+  padding: 10px;
+  padding-left: 30px;
+  width: 100%;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  transition: 0.4s;
+  border: 1px solid rgb(222, 227, 233);
+  border-radius: 5px;
+  
+}
+
+.accordion:hover {
+  background-color: rgb(229, 241, 247); 
+}
+
+.panel {
+  padding: 10px;
+  display: none;
+  background-color: white;
+  overflow: hidden;
+  border: 1px solid rgb(230, 235, 240);
+  border-radius: 5px;
+  padding-left: 20px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container mt-3">
+    <div class="d-flex flex-row-reverse">
+        <form method="POST" action="/logout">
+            <button type="submit" class="btn btn-primary btn-sm">Log out</button>
+        </form>
+    </div>
+    <ul class="nav">
+        <li class="nav-item">
+            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/dprofile">Profile</a>
+        </li>
+        <li class="nav-item">
+            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-request-a-new-pickup-form/<%=donoraccount%>">Request a New Pickup</a>
+        </li>
+        <li class="nav-item">
+            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-requests-history/<%=donoraccount%>">Requests History</a>
+        </li>
+        <li class="nav-item">
+            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-search-donors/<%=donoraccount%>">Search Receivers Near me</a>
+        </li>
+        <li class="nav-item">
+            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-search-donors/<%=donoraccount%>">Chat History</a>
+        </li>
+    </ul>
+    <hr>
+    <br>
+    <br>
+</div>
+
+<div class="container mt-3">
+    <%
+    if(userData.length!=0){
+        var i=1;
+        userData.forEach(function(data){
+    %>
+    <button class="accordion">Pickup Request #<%=data.PICKUP_REQUEST_NO%> [Created on <%= data.ADD_TS.substring(0,10)%>]</button>
+    <div class="panel">
+        <div class="row">
+            <div class="col-sm-3"><h6>Recyclable Items</h6></div>
+            <div class="col-sm-9">
+                Plastic Bottle  : <%=data.PLASTIC_BOTTLE%><br>
+                Plastic Wrapper : <%=data.PLASTIC_WRAPPER%><br>
+                Glass Bottle    : <%=data.GLASS_BOTTLE%><br>
+                Metal Cans      : <%=data.METAL_CANS%><br>
+                Paper Waste     : <%=data.PAPER_WASTE%><br>
+                Other Waste     : <%=data.OTHER_WASTE%>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-3"><h6>Pickup Location</h6></div>
+            <div class="col-sm-9"><%=data.DONOR_ADDRESS%><br><%=data.DONOR_CITY%>, <%=data.DONOR_STATE%><br><%=data.DONOR_COUNTRY%> <%=data.DONOR_PIN_OR_ZIP%></div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-3"><h6>Contact Number</h6></div>
+            <div class="col-sm-9"><%=data.DONOR_PHONE_NO%></div>
+        </div>
+        <div class="col text-center">
+            <a class="edit-pickup-info" href="/get-edit-pickup/<%=data.PICKUP_REQUEST_NO%>" title="Edit">Edit</a>&nbsp;
+            <a class="delete-pickup-info" data-pickup-id="<%=data.PICKUP_REQUEST_NO%>" href="" title="Delete">Delete</a>
+        </div>
+    </div>
+    <%  i++; }) %>
+    <% } else{ %>
+    <h5 colspan="7">No pickup request is found!</h5>
+    <% } %>
+    <br>
+    <br>
+    <br>
+</div>
+
+<!-- Script for Accordion starts-->
+<script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+          panel.style.display = "none";
+        } else {
+          panel.style.display = "block";
+        }
+      });
+    }
+</script>
+<!-- Script for Accordion ends-->
+
+</body>
+</html>

@@ -57,8 +57,12 @@ let initWebRoutes = (app) => {
 /*Login Authentication - Ends*/
 
 /*Donor's after login - Starts*/
-    router.post("/dprofile", donorProfileController.createPickupRequest);
-    
+    //router.post("/dprofile", donorProfileController.createPickupRequest);
+    router.get("/get-request-a-new-pickup-form/:id", donorProfileController.getRequestANewPickupForm);
+    router.post("/post-new-pickup-request/:id", donorProfileController.postNewPickupRequest);
+
+    router.get("/get-requests-history/:id", donorProfileController.getRequestsHistory);
+
     router.get('/get-edit-pickup/:id', donorProfileController.getEditPickup);
     router.put('/put-edit-pickup', donorProfileController.putEditPickup);
     router.delete('/delete-pickup', donorProfileController.deletePickupById);
