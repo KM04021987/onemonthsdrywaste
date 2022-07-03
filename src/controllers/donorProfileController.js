@@ -76,7 +76,10 @@ let postNewPickupRequest = async (req, res) => {
 
 let getRequestsHistory = async (req, res) => {
     console.log('donorProfileController: getRequestsHistory')
-    const donoraccount = req.params.id
+    const jsonData = JSON.stringify(req.user)
+    const jsonParseObj = JSON.parse(jsonData)
+    const jsonaccount = jsonParseObj.ACCOUNT
+    const donoraccount = jsonaccount
 
     pickuprequestService.extractPickupRequest(donoraccount).then((data) => {
         return res.render("donorrequestshistory.ejs",{
@@ -90,7 +93,8 @@ let getRequestsHistory = async (req, res) => {
 
 let getEditPickup = async (req, res) => {
     console.log('donorProfileController: getEditPickup')
-    await pickuprequestService.getPickupForEditPage(req.params.id).then((pickup) => {
+    const pickuprequestno = req.params.id
+    await pickuprequestService.getPickupForEditPage(pickuprequestno).then((pickup) => {
     const jsonData = JSON.stringify(pickup)
     const removebracket1 = jsonData.replace('[','')
     const removebracket2 = removebracket1.replace(']','')
@@ -112,6 +116,7 @@ let getEditPickup = async (req, res) => {
     const jsonDONOR_PHONE_NO = jsonParseobj.DONOR_PHONE_NO
 
     return res.render("donoreditpickup.ejs", {
+        donoraccount: jsonDONOR_ACCOUNT,
         PICKUP_REQUEST_NO: jsonPICKUP_REQUEST_NO,
         DONOR_ACCOUNT: jsonDONOR_ACCOUNT,
         PLASTIC_BOTTLE: jsonPLASTIC_BOTTLE,
@@ -179,9 +184,17 @@ let deletePickupById = async (req, res) => {
     }
 };
 
-let getReceiverList = async (req, res) => {
-    console.log('donorProfileController: getReceiverList')
-    let donoraccount = req.body.account
+let getSearchReceiversForm = async (req, res) => {
+    console.log('donorProfileController: getSearchReceiversForm')
+    const donoraccount = req.params.id
+    return res.render("donorsearchreceiversnearme.ejs", {
+        donoraccount: donoraccount
+    })
+}
+
+let showListOfReceivers = async (req, res) => {
+    console.log('donorProfileController: showListOfReceivers')
+    let donoraccount = req.params.id
     let findByInfo = {
         country: req.body.country,
         state: req.body.state,
@@ -190,12 +203,43 @@ let getReceiverList = async (req, res) => {
     await pickuprequestService.getReceiverList(findByInfo).then((data) => {
     return res.render("donorlistofreceivers.ejs", {
         userData: data,
-        donoraccount: donoraccount
+        donoraccount: donoraccount,
+        country: req.body.country,
+        state: req.body.state,
+        pin: req.body.pin
     })
     }).catch(error => {
     console.log('error while finding receiver info')
     });
 };
+
+let sendMessageToReceiver = async (req, res) => {
+    console.log('receiverProfileController: sendMessageToReceiver')
+    const donoraccount = req.body.donoraccount
+    const receiveraccount = req.body.receiveraccount
+    const messageContent = req.body.messageContent
+
+    await pickuprequestService.saveReceiversMessage(donoraccount, receiveraccount, messageContent).then(() => {
+        let findByInfo = {
+            country: req.body.country,
+            state: req.body.state,
+            pin: req.body.pin
+        };
+        pickuprequestService.getReceiverList(findByInfo).then((data) => {
+            return res.render("donorlistofreceivers.ejs", {
+                userData: data,
+                donoraccount: donoraccount,
+                country: req.body.country,
+                state: req.body.state,
+                pin: req.body.pin
+            })
+        }).catch(error => {
+            console.log("error while fetching receiver's information")
+        });
+    }).catch(error => {
+        console.log("error while saving the donor's message")
+    });
+}
 
 module.exports = {
     handleDonorPage: handleDonorPage,
@@ -204,9 +248,11 @@ module.exports = {
     postNewPickupRequest: postNewPickupRequest,
 
     getRequestsHistory: getRequestsHistory,
-    
     getEditPickup: getEditPickup,
     putEditPickup: putEditPickup,
     deletePickupById: deletePickupById,
-    getReceiverList: getReceiverList
+
+    getSearchReceiversForm: getSearchReceiversForm,
+    showListOfReceivers: showListOfReceivers,
+    sendMessageToReceiver: sendMessageToReceiver
 };

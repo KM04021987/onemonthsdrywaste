@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>List of Receivers</title>
+    <title>List of Donors</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--Bootstrap-->
@@ -58,25 +58,22 @@
 
 <div class="container mt-3">
     <div class="d-flex flex-row-reverse">
-        <form method="POST" action="/dlogout">
+        <form method="POST" action="/rlogout">
             <button type="submit" class="btn btn-primary btn-sm">Log out</button>
         </form>
     </div>
     <ul class="nav">
         <li class="nav-item">
-            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/dprofile">Profile</a>
+            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/rprofile">Profile</a>
         </li>
         <li class="nav-item">
-            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-request-a-new-pickup-form/<%=donoraccount%>">Request a New Pickup</a>
+            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-search-pickup-form/<%=receiveraccount%>">Search Pickup Requests</a>
         </li>
         <li class="nav-item">
-            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-requests-history/<%=donoraccount%>">Requests History</a>
+            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-search-donors-form/<%=receiveraccount%>">Search Donors Near me</a>
         </li>
         <li class="nav-item">
-            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-search-receivers-form/<%=donoraccount%>">Search Receivers Near me</a>
-        </li>
-        <li class="nav-item">
-            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-search-donors/<%=donoraccount%>">Chat History</a>
+            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-search-donors/<%=receiveraccount%>">Chat History</a>
         </li>
     </ul>
     <hr>
@@ -86,7 +83,7 @@
 <div class="container">
 <div class="col-10 mx-auto">
         <br>
-        <form method="GET" action="/get-search-receivers-form/<%=donoraccount%>">
+        <form method="GET" action="/get-search-donors-form/<%=receiveraccount%>">
             <button type="submit" class="btn btn-primary btn-sm">Click Here to Search with Other Location</button>
         </form>
         <br>
@@ -98,7 +95,7 @@
         <button class="accordion"><%=data.FULLNAME%>[<%=data.CITY%>, <%=data.STATE%>]</button>
         <div class="panel">
             <div class="row">
-                <div class="col-sm-3"><h6>Receiver's Account:</h6></div>
+                <div class="col-sm-3"><h6>Donor's Account:</h6></div>
                 <div class="col-sm-9"><%=data.ACCOUNT%></div>
             </div>
             <div class="row">
@@ -111,15 +108,15 @@
             </div>
             <br>
 
-            <h7>If you are interested to contact the Receiver, please send a note in the below description area, and click on "Send Message" Button.</h7>
+            <h7>If you are interested to contact the Donor, please send a note in the below description area, and click on "Send Message" Button.</h7>
             
-            <form method="POST" action="/send-message-to-receiver/<%=donoraccount%>">
+            <form method="POST" action="/send-message-to-receiver/<%=receiveraccount%>">
               <div class="form-group">
                   <textarea id="messageContent" name="messageContent" class="form-control" placeholder="Type your message(Maximum 250 character)"></textarea>
               </div>
               
-              <input type="hidden" id="receiveraccount" name="receiveraccount" value="<%=data.ACCOUNT%>">
-              <input type="hidden" id="donoraccount" name="donoraccount" value="<%=donoraccount%>">
+              <input type="hidden" id="receiveraccount" name="receiveraccount" value="<%=receiveraccount%>">
+              <input type="hidden" id="donoraccount" name="donoraccount" value="<%=data.ACCOUNT%>">
               <input type="hidden" id="country" name="country" value="<%=country%>">
               <input type="hidden" id="state" name="state" value="<%=state%>">
               <input type="hidden" id="pin" name="pin" value="<%=pin%>">                   

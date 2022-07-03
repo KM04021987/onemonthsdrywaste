@@ -62,22 +62,29 @@ let initWebRoutes = (app) => {
     router.post("/post-new-pickup-request/:id", donorProfileController.postNewPickupRequest);
 
     router.get("/get-requests-history/:id", donorProfileController.getRequestsHistory);
-
     router.get('/get-edit-pickup/:id', donorProfileController.getEditPickup);
     router.put('/put-edit-pickup', donorProfileController.putEditPickup);
     router.delete('/delete-pickup', donorProfileController.deletePickupById);
-    router.post('/list-of-receivers', donorProfileController.getReceiverList);
+
+    router.get('/get-search-receivers-form/:id', donorProfileController.getSearchReceiversForm);
+    router.post('/show-list-of-receivers/:id', donorProfileController.showListOfReceivers);
+    router.post('/send-message-to-receiver/:id', donorProfileController.sendMessageToReceiver);
 /*Donor's after login - Ends*/
 
 /*Receiver's after login - Starts*/
     router.get('/get-search-pickup-form/:id', receiverProfileController.getSearchPickupForm);
     router.post('/show-list-of-pickup/:id', receiverProfileController.showListOfPickup);
-    router.post('/send-message/:id', receiverProfileController.sendMessage);
+    router.post('/send-message-to-donor/:id', receiverProfileController.sendMessage);
+
+    
+    router.get('/get-search-donors-form/:id', receiverProfileController.getSearchDonorsForm);
+    router.post('/show-list-of-donors/:id', receiverProfileController.showListOfDonors);
+    router.post('/send-message-to-donor/:id', receiverProfileController.sendMessageToDonor);
 /*Receiver's after login - Ends*/
 
 /*Logout Starts*/
-    router.post("/logout", donorloginController.postLogOut);
-    router.post("/logout", receiverloginController.postLogOut);
+    router.post("/dlogout", donorloginController.postLogOut);
+    router.post("/rlogout", receiverloginController.postLogOut);
 /*Logout Ends*/
 
     return app.use("/", router);

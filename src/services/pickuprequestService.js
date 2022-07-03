@@ -58,13 +58,13 @@ let extractPickupRequest = (donoraccount) => {
     });
 };
 
-let getPickupForEditPage = (id) => {
+let getPickupForEditPage = (pickuprequestno) => {
     console.log('pickuprequestService: getPickupForEditPage')
     return new Promise((resolve, reject) => {
         try {
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
-                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE pickup_request_no=? with ur;", [id], function(err, rows) {
+                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE pickup_request_no=? with ur;", [pickuprequestno], function(err, rows) {
                     if (err) {
                         console.log(err)
                         reject(err)
@@ -170,6 +170,27 @@ let saveReceiversMessage = (donoraccount, receiveraccount, messageContent) => {
 };
 
 
+let getDonorList = (findByInfo) => {
+    console.log('pickuprequestService: getDonorList')
+    return new Promise((resolve, reject) => {
+        try {
+            ibmdb.open(connStr, function (err, conn) {
+                if (err) throw err;
+                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".donor_info WHERE Country = ? and state = ? and PIN_OR_ZIP = ?  with ur;", [findByInfo.country, findByInfo.state, findByInfo.pin], function(err, rows) {
+                    if (err) {
+                        console.log(err)
+                        reject(err)
+                    }
+                    let data = rows;
+                    resolve(data);
+                })
+            });
+        } catch (err) {
+            reject(err);
+        }
+    });
+};
+
 module.exports = {
     createPickupRequest: createPickupRequest,
     getPickupRequestNumber: getPickupRequestNumber,
@@ -179,5 +200,6 @@ module.exports = {
     deletePickupById: deletePickupById,
     getReceiverList: getReceiverList,
     getPickupList: getPickupList,
-    saveReceiversMessage: saveReceiversMessage
+    saveReceiversMessage: saveReceiversMessage,
+    getDonorList: getDonorList
 };

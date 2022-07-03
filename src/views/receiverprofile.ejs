@@ -12,19 +12,22 @@
 
 <div class="container mt-3">
     <div class="d-flex flex-row-reverse">
-        <form method="POST" action="/logout">
+        <form method="POST" action="/rlogout">
             <button type="submit" class="btn btn-primary btn-sm">Log out</button>
         </form>
     </div>
     <ul class="nav">
         <li class="nav-item">
-          <a style="font-weight: bold; text-decoration: underline;" class="nav-link" href="/rprofile">Profile</a>
+          <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/rprofile">Profile</a>
         </li>
         <li class="nav-item">
-          <a style="font-weight: bold; text-decoration: underline;" class="nav-link" href="/get-search-pickup-form/<%=receiveraccount%>">Search Pickup Requests</a>
+          <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-search-pickup-form/<%=receiveraccount%>">Search Pickup Requests</a>
         </li>
         <li class="nav-item">
-          <a style="font-weight: bold; text-decoration: underline;" class="nav-link" href="/get-search-donors/<%=receiveraccount%>">Search Donors</a>
+          <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-search-donors-form/<%=receiveraccount%>">Search Donors Near me</a>
+        </li>
+        <li class="nav-item">
+          <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-search-donors/<%=receiveraccount%>">Chat History</a>
         </li>
     </ul>
     <hr>
