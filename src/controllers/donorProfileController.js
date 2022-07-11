@@ -1,4 +1,6 @@
 import pickuprequestService from "./../services/pickuprequestService";
+import messageinfoService from "./../services/messageinfoService";
+import donorloginService from "./../services/donorloginService";
 
 let handleDonorPage = async (req, res) => {
     console.log('donorProfileController: handleDonorPage')
@@ -13,16 +15,23 @@ let handleDonorPage = async (req, res) => {
     const jsonpin_or_zip = jsonParseObj.PIN_OR_ZIP
     const jsonaddress = jsonParseObj.ADDRESS
 
-    return res.render("donorprofile.ejs",{
-        donoraccount: jsonaccount,
-        fullname: jsonfullname,
-        phone: jsonphone_no,
-        country: jsoncountry,
-        state: jsonstate,
-        city: jsoncity,
-        pin: jsonpin_or_zip,
-        address: jsonaddress
-    });
+    donorloginService.findUserByPhone(jsonphone_no).then(async (donoruser) => {
+        if (!donoruser) {
+            return res.render("donorprofilenotcorrect.ejs")
+        }
+        else {
+            return res.render("donorprofile.ejs",{
+                donoraccount: jsonaccount,
+                fullname: jsonfullname,
+                phone: jsonphone_no,
+                country: jsoncountry,
+                state: jsonstate,
+                city: jsoncity,
+                pin: jsonpin_or_zip,
+                address: jsonaddress
+            });
+        }
+    })
 };
 
 
@@ -219,7 +228,7 @@ let sendMessageToReceiver = async (req, res) => {
     const receiveraccount = req.body.receiveraccount
     const messageContent = req.body.messageContent
 
-    await pickuprequestService.saveReceiversMessage(donoraccount, receiveraccount, messageContent).then(() => {
+    await messageinfoService.saveDonorsMessage(donoraccount, receiveraccount, messageContent).then(() => {
         let findByInfo = {
             country: req.body.country,
             state: req.body.state,
@@ -241,6 +250,82 @@ let sendMessageToReceiver = async (req, res) => {
     });
 }
 
+let getDonorChatHistoryList = async (req, res) => {
+    console.log('donorProfileController: getDonorChatHistoryList')
+    let donoraccount = req.params.id
+
+    messageinfoService.getChatListOfDonor(donoraccount).then((data) => {
+    return res.render("donorchathistorylist.ejs", {
+        userData: data,
+        donoraccount: donoraccount
+    })
+    }).catch(error => {
+    console.log("error while finding Donor's Chat History")
+    });
+};
+
+
+let showDonorChatHistory = async (req, res) => {
+    console.log('donorProfileController: showDonorChatHistory')
+    let donoraccount = req.params.id
+    const receiveraccount = req.body.receiveraccount
+    const fullname = req.body.fullname
+
+    await messageinfoService.getDonorChatHistory(donoraccount, receiveraccount).then((data) => {
+    return res.render("donorchatdetails.ejs", {
+        userData: data,
+        donoraccount: donoraccount,
+        receiveraccount: receiveraccount,
+        fullname: fullname
+    })
+    }).catch(error => {
+    console.log('error while finding Donor Chat Details')
+    });
+};
+
+let sendMessageRealtimeToReceiver = async (req, res) => {
+    console.log('receiverProfileController: sendMessageRealtimeToReceiver')
+    const donoraccount = req.body.donoraccount
+    const receiveraccount = req.body.receiveraccount
+    const messageContent = req.body.messageContent
+    const fullname = req.body.fullname
+
+    await messageinfoService.saveDonorsMessage(donoraccount, receiveraccount, messageContent).then(() => {
+        messageinfoService.getDonorChatHistory(donoraccount, receiveraccount).then((data) => {
+            return res.render("donorchatdetails.ejs", {
+                userData: data,
+                donoraccount: donoraccount,
+                receiveraccount: receiveraccount,
+                fullname: fullname
+            })
+            }).catch(error => {
+            console.log('error while finding Chat History')
+            });
+    }).catch(error => {
+        console.log("error while saving the donor's message")
+    });
+}
+
+let refreshDonorRealtime = async (req, res) => {
+    console.log('donorProfileController: refreshDonorRealtime')
+    const jsonData = JSON.stringify(req.user)
+    const jsonParseObj = JSON.parse(jsonData)
+    const jsonaccount = jsonParseObj.ACCOUNT
+    const donoraccount = jsonaccount
+    const receiveraccount = req.params.id
+    const fullname = req.body.fullname
+    await messageinfoService.getDonorChatHistory(donoraccount, receiveraccount).then((data) => {
+    return res.render("donorrefreshmessage.ejs", {
+        userData: data,
+        donoraccount: donoraccount,
+        receiveraccount: receiveraccount,
+        fullname: fullname
+    })
+    }).catch(error => {
+    console.log('error while finding Chat History')
+    });
+}
+
 module.exports = {
     handleDonorPage: handleDonorPage,
 
@@ -254,5 +339,10 @@ module.exports = {
 
     getSearchReceiversForm: getSearchReceiversForm,
     showListOfReceivers: showListOfReceivers,
-    sendMessageToReceiver: sendMessageToReceiver
+    sendMessageToReceiver: sendMessageToReceiver,
+
+    getDonorChatHistoryList: getDonorChatHistoryList,
+    showDonorChatHistory: showDonorChatHistory,
+    sendMessageRealtimeToReceiver: sendMessageRealtimeToReceiver,
+    refreshDonorRealtime: refreshDonorRealtime
 };

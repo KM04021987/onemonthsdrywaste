@@ -7,6 +7,23 @@
 <!--Bootstrap-->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+<style>
+  .accordion {
+    background-color: rgb(244, 250, 252);
+    color: rgb(75, 75, 202);
+    cursor: pointer;
+    padding: 5px;
+    padding-left: 30px;
+    width: 100%;
+    text-align: left;
+    outline: none;
+    font-size: 14px;
+    font-weight: bold;
+    transition: 0.4s;
+    border: 1px solid rgb(222, 227, 233);
+    border-radius: 5px;
+  }
+</style>
 </head>
 <body>
 
@@ -34,14 +51,28 @@
 </div>
 
 <div class="container">
-    <h5> Welcome <%=fullname%>!</h5>
-    <br>
-    <h6>Account Number: <%=receiveraccount%></h6>
-    <h6>Phone Number  : <%=phone%></h6>
-    <h6>Address       : <%=address%><%=city%><%=state%><%=country%><%=pin%></h6>
-</div>  
-
-
+<div class="col-10 mx-auto">
+        <br>
+        <%
+        if(userData.length!=0){
+            var i=1;
+            userData.forEach(function(data){
+        %>
+            <form method="POST" action="/show-receiver-chat-history/<%=receiveraccount%>">                
+                <button class="accordion"><%=data.FULLNAME%></button>
+                <input type="hidden" id="fullname" name="fullname" value="<%=data.FULLNAME%>">
+                <input type="hidden" id="donoraccount" name="donoraccount" value="<%=data.DONOR_ACCOUNT%>">
+                <input type="hidden" id="receiveraccount" name="receiveraccount" value="<%=receiveraccount%>">
+            </form>
+        <%  i++; }) %>
+        <% } else{ %>
+        <h5 colspan="7">There is no Chat History!</h5>
+        <% } %>
+        <br>
+        <br>
+        <br>
+</div>
+</div>    
 
 </body>
 </html>

@@ -153,23 +153,6 @@ let getPickupList = (RECEIVER_COUNTRY, RECEIVER_STATE, RECEIVER_PIN_OR_ZIP) => {
     });
 };
 
-let saveReceiversMessage = (donoraccount, receiveraccount, messageContent) => {
-    console.log('pickuprequestService: saveReceiversMessage')
-    return new Promise(async (resolve, reject) => {
-            ibmdb.open(connStr, function (err, conn) {
-                if (err) throw err;
-                conn.query("INSERT INTO "+process.env.DB_SCHEMA+".MESSAGE_INFO(DONOR_ACCOUNT, RECEIVER_ACCOUNT, RECEIVERS_MESSAGE) values(?, ?, ?);", [donoraccount, receiveraccount, messageContent], function(err, rows) {
-                    if (err) {
-                        console.log(err)
-                        reject(false)
-                    }
-                    resolve("Successfully Created a new pickup request");
-                })
-            });
-    });
-};
-
-
 let getDonorList = (findByInfo) => {
     console.log('pickuprequestService: getDonorList')
     return new Promise((resolve, reject) => {
@@ -200,6 +183,5 @@ module.exports = {
     deletePickupById: deletePickupById,
     getReceiverList: getReceiverList,
     getPickupList: getPickupList,
-    saveReceiversMessage: saveReceiversMessage,
     getDonorList: getDonorList
 };

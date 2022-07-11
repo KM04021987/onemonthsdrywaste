@@ -69,17 +69,28 @@ let initWebRoutes = (app) => {
     router.get('/get-search-receivers-form/:id', donorProfileController.getSearchReceiversForm);
     router.post('/show-list-of-receivers/:id', donorProfileController.showListOfReceivers);
     router.post('/send-message-to-receiver/:id', donorProfileController.sendMessageToReceiver);
+
+    router.get('/get-donor-chat-history-list/:id', donorProfileController.getDonorChatHistoryList);
+    router.post('/show-donor-chat-history/:id', donorProfileController.showDonorChatHistory);
+    router.get('/show-donor-chat-history/:id', donorProfileController.refreshDonorRealtime);
+    router.get('/send-message-realtime-to-receiver/:id', donorProfileController.refreshDonorRealtime);    
+    router.post('/send-message-realtime-to-receiver/:id', donorProfileController.sendMessageRealtimeToReceiver);
 /*Donor's after login - Ends*/
 
 /*Receiver's after login - Starts*/
     router.get('/get-search-pickup-form/:id', receiverProfileController.getSearchPickupForm);
     router.post('/show-list-of-pickup/:id', receiverProfileController.showListOfPickup);
-    router.post('/send-message-to-donor/:id', receiverProfileController.sendMessage);
+    router.post('/send-message-to-pickup-request/:id', receiverProfileController.sendMessage);
 
-    
     router.get('/get-search-donors-form/:id', receiverProfileController.getSearchDonorsForm);
     router.post('/show-list-of-donors/:id', receiverProfileController.showListOfDonors);
     router.post('/send-message-to-donor/:id', receiverProfileController.sendMessageToDonor);
+
+    router.get('/get-receiver-chat-history-list/:id', receiverProfileController.getReceiverChatHistoryList);
+    router.post('/show-receiver-chat-history/:id', receiverProfileController.showReceiverChatHistory);
+    router.get('/show-receiver-chat-history/:id', receiverProfileController.refreshReceiverRealtime);
+    router.get('/send-message-realtime-to-donor/:id', receiverProfileController.refreshReceiverRealtime);    
+    router.post('/send-message-realtime-to-donor/:id', receiverProfileController.sendMessageRealtimeToDonor);
 /*Receiver's after login - Ends*/
 
 /*Logout Starts*/

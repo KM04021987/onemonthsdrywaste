@@ -1,0 +1,24 @@
+<div id="refresh">
+    <br>
+    <%
+    if(userData.length!=0){
+        var i=1;
+        userData.forEach(function(data){
+    %>          
+        <div class="form-row">
+          <div style="text-align: left; background-color: rgb(224, 250, 224); margin: 5px; border-radius: 3px;">
+            <%=data.DONORS_MESSAGE%>
+          </div>
+        </div>
+        <div class="d-flex flex-row-reverse">
+            <div style="text-align: right; background-color: rgb(190, 204, 250); margin: 5px; border-radius: 3px;">
+              <%=data.RECEIVERS_MESSAGE%>
+            </div>
+        </div>
+
+    <%  i++; }) %>
+    <% } else{ %>
+    <h5 colspan="7">No Message!</h5>
+    <% } %>
+    <br>   
+</div> 
