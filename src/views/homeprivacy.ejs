@@ -15,44 +15,7 @@
 </head>
 <body>
 
-<div class="container mt-3">
-  <div class="d-flex flex-row-reverse">
-    <br>
-    <div>
-      <a href="donorlogin.ejs"><button type="submit" class="btn btn-primary btn-sm">Donor's Login</button></a>
-      <a href="receiverlogin.ejs"><button type="submit" class="btn btn-primary btn-sm">Receiver's Login</button></a>
-    </div>
-  </div>
-</div>
-
-<div class="container mt-3">
-  <h1 style="font-family: 'Allura', cursive; font-family: 'Poppins', sans-serif; font-family: 'Yellowtail', cursive;">One month's dry-waste</h1>
-  <h6 style="color: green">A smart recycling system to resolve landfill problem</h6>
-  <hr>
-</div>
-
-<div class="container">
-  <ul class="nav">
-    <li class="nav-item">
-      <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/">Home</a>
-    </li>
-    <li class="nav-item">
-      <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/about">About</a>
-    </li>
-    <li class="nav-item">
-      <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/recyclableItems">Recyclable items</a>
-    </li>
-    <li class="nav-item">
-      <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/stepstofollow">Steps to follow</a>
-    </li>
-    <li class="nav-item">
-      <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/privacy">Privacy</a>
-    </li>
-    <li class="nav-item">
-      <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/faq">FAQs</a>
-    </li>
-  </ul>
-</div>
+<%- include("#homeheader.ejs"); %>
 
 <div class="container mt-3">
   <h2>Privacy</h2>

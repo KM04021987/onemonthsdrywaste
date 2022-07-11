@@ -56,32 +56,7 @@
 
 <body>
 
-<div class="container mt-3">
-    <div class="d-flex flex-row-reverse">
-        <form method="POST" action="/dlogout">
-            <button type="submit" class="btn btn-primary btn-sm">Log out</button>
-        </form>
-    </div>
-    <ul class="nav">
-        <li class="nav-item">
-            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/dprofile">Profile</a>
-        </li>
-        <li class="nav-item">
-            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-request-a-new-pickup-form/<%=donoraccount%>">Request a New Pickup</a>
-        </li>
-        <li class="nav-item">
-            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-requests-history/<%=donoraccount%>">Requests History</a>
-        </li>
-        <li class="nav-item">
-            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-search-receivers-form/<%=donoraccount%>">Search Receivers Near me</a>
-        </li>
-        <li class="nav-item">
-            <a style="font-weight: bold; text-decoration: underline; color: #337ab7;" class="nav-link" href="/get-donor-chat-history-list/<%=donoraccount%>">Chat History</a>
-        </li>
-    </ul>
-    <hr>
-</div>
-
+<%- include("#donorheader.ejs"); %>
 
 <div class="container">
 <div class="col-10 mx-auto">
