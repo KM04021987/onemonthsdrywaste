@@ -38,6 +38,9 @@
 <div class="container mt-3">
 <br>
 <div class="col-10 mx-auto">
+<a style="font-weight: bold; text-decoration: underline; color: #337ab7;" href="/get-donor-chat-history-list/<%=donoraccount%>">Back</a>
+<br>
+<br>
 <button class="chatlistheading"><%=fullname%></button>
 <div style="border: 1px solid rgb(230, 235, 240); max-height: 600px; width: 100%; overflow-y:scroll;">
 <div class="col-10 mx-auto">
@@ -66,7 +69,7 @@
     <br>   
     </div>                                                                       
 
-    <form method="POST" action="/send-message-realtime-to-receiver/<%=donoraccount%>">
+    <form method="POST" action="/send-message-realtime-to-receiver/<%=receiveraccount%>">
         <div class="form-group">
             <textarea id="messageContent" name="messageContent" class="form-control" placeholder="Type your message(Maximum 250 character)" required></textarea>
         </div>

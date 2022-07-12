@@ -38,7 +38,7 @@
             var i=1;
             userData.forEach(function(data){
         %>
-            <form method="POST" action="/show-donor-chat-history/<%=donoraccount%>">                
+            <form method="POST" action="/show-donor-chat-history/<%=data.RECEIVER_ACCOUNT%>">                
                 <button class="accordion"><%=data.FULLNAME%></button>
                 <input type="hidden" id="fullname" name="fullname" value="<%=data.FULLNAME%>">
                 <input type="hidden" id="receiveraccount" name="receiveraccount" value="<%=data.RECEIVER_ACCOUNT%>">

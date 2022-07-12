@@ -267,8 +267,8 @@ let getDonorChatHistoryList = async (req, res) => {
 
 let showDonorChatHistory = async (req, res) => {
     console.log('donorProfileController: showDonorChatHistory')
-    let donoraccount = req.params.id
-    const receiveraccount = req.body.receiveraccount
+    const donoraccount = req.body.donoraccount
+    const receiveraccount = req.params.id
     const fullname = req.body.fullname
 
     await messageinfoService.getDonorChatHistory(donoraccount, receiveraccount).then((data) => {
@@ -286,7 +286,7 @@ let showDonorChatHistory = async (req, res) => {
 let sendMessageRealtimeToReceiver = async (req, res) => {
     console.log('receiverProfileController: sendMessageRealtimeToReceiver')
     const donoraccount = req.body.donoraccount
-    const receiveraccount = req.body.receiveraccount
+    const receiveraccount = req.params.id
     const messageContent = req.body.messageContent
     const fullname = req.body.fullname
 
@@ -313,13 +313,12 @@ let refreshDonorRealtime = async (req, res) => {
     const jsonaccount = jsonParseObj.ACCOUNT
     const donoraccount = jsonaccount
     const receiveraccount = req.params.id
-    const fullname = req.body.fullname
+
     await messageinfoService.getDonorChatHistory(donoraccount, receiveraccount).then((data) => {
     return res.render("donorrefreshmessage.ejs", {
         userData: data,
         donoraccount: donoraccount,
-        receiveraccount: receiveraccount,
-        fullname: fullname
+        receiveraccount: receiveraccount
     })
     }).catch(error => {
     console.log('error while finding Chat History')
