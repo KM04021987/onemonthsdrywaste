@@ -35,9 +35,9 @@ function handleEditPickup(data) {
 function deletePickupById() {
     console.log('deletePickupById')
     $('.delete-pickup-info').on('click', function(e) {
-        if (!confirm('Are you sure you want to delete this pickup request?')) {
+        /*if (!confirm('Are you sure you want to delete this pickup request?')) {
             return
-        }
+        }*/
         let id = $(this).data('pickup-id');
         $.ajax({
             method: 'DELETE',
