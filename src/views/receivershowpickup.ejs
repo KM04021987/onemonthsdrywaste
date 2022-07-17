@@ -14,12 +14,12 @@
   color: rgb(75, 75, 202);
   cursor: pointer;
   padding: 5px;
-  padding-left: 30px;
+  padding-left: 10px;
   width: 100%;
   text-align: left;
   outline: none;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: normal;
   transition: 0.4s;
   border: 1px solid rgb(222, 227, 233);
   border-radius: 5px;
@@ -41,9 +41,9 @@
 
 .accordion:after {
   content: '\002B';
-  color: #777;
+  color: black;
   font-weight: bold;
-  float: right;
+  float: left;
   margin-left: 5px;
 }
 
@@ -58,7 +58,7 @@
 <%- include("#receiverheader.ejs"); %>
 
 <div class="container">
-<div class="col-10 mx-auto">
+<div class="col-11 mx-auto">
 
     <br>
     <form method="GET" action="/get-search-pickup-form/<%=receiveraccount%>">
@@ -71,8 +71,15 @@
             var i=1;
             userData.forEach(function(data){
         %>
-        <button class="accordion">Pickup Request #<%=data.PICKUP_REQUEST_NO%> [Created on <%= data.ADD_TS.substring(0,10)%>]</button>
+        <button class="accordion">&nbsp;&nbsp;&nbsp; Pickup #<%=data.PICKUP_REQUEST_NO%> [Created on <%= data.ADD_TS.substring(0,10)%>]</button>
         <div class="panel">
+            <div class="row">
+                <div class="col-sm-3"><h6>Pickup Request Date & Time</h6></div>
+                <div class="col-sm-9">
+                    <%=data.ADD_TS.substring(0,10)%> & <%=data.ADD_TS.substring(11,19)%>
+                </div>
+            </div>
+            <br>
             <div class="row">
                 <div class="col-sm-3"><h6>Recyclable Items</h6></div>
                 <div class="col-sm-9">
@@ -97,7 +104,7 @@
             <br>
 
             
-            <h7>If you are interested to contact the Donor, please send a note in the below description area, and click on "Send Message" Button.</h7>
+            <p class="col text-center">If you are interested to contact the Donor, please send a note in the below description area, and click on "Send Message" Button.</p>
             
 
             <form method="POST" action="/send-message-to-pickup-request/<%=receiveraccount%>">

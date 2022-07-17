@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
 <style>
-  .accordion {
+  .chatlistheading {
     background-color: rgb(244, 250, 252);
     color: rgb(75, 75, 202);
     cursor: pointer;
@@ -38,7 +38,7 @@
             userData.forEach(function(data){
         %>
             <form method="POST" action="/show-receiver-chat-history/<%=data.DONOR_ACCOUNT%>">                
-                <button class="accordion"><%=data.FULLNAME%></button>
+                <button class="chatlistheading"><%=data.FULLNAME%></button>
                 <input type="hidden" id="fullname" name="fullname" value="<%=data.FULLNAME%>">
                 <input type="hidden" id="donoraccount" name="donoraccount" value="<%=data.DONOR_ACCOUNT%>">
                 <input type="hidden" id="receiveraccount" name="receiveraccount" value="<%=receiveraccount%>">

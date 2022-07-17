@@ -18,12 +18,12 @@
   color: rgb(50, 50, 206);
   cursor: pointer;
   padding: 5px;
-  padding-left: 30px;
+  padding-left: 10px;
   width: 100%;
   text-align: left;
   outline: none;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: normal;
   transition: 0.4s;
   border: 1px solid rgb(222, 227, 233);
   border-radius: 5px;
@@ -45,9 +45,9 @@
 
 .accordion:after {
   content: '\002B';
-  color: #777;
+  color: black;
   font-weight: bold;
-  float: right;
+  float: left;
   margin-left: 5px;
 }
 
@@ -63,24 +63,31 @@
 <%- include("#donorheader.ejs"); %>
 
 <div class="container mt-3">
-<div class="col-10 mx-auto">
+<div class="col-11 mx-auto">
     <br>
     <%
     if(userData.length!=0){
         var i=1;
         userData.forEach(function(data){
     %>
-    <button class="accordion">Pickup Request #<%=data.PICKUP_REQUEST_NO%> [Created on <%= data.ADD_TS.substring(0,10)%>]</button>
+    <button class="accordion">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pickup #<%=data.PICKUP_REQUEST_NO%> [Created on <%= data.ADD_TS.substring(0,10)%>]</button>
     <div class="panel">
+        <div class="row">
+            <div class="col-sm-3"><h6>Pickup Request Date & Time</h6></div>
+            <div class="col-sm-9">
+                <%=data.ADD_TS.substring(0,10)%> & <%=data.ADD_TS.substring(11,19)%>
+            </div>
+        </div>
+        <br>
         <div class="row">
             <div class="col-sm-3"><h6>Recyclable Items</h6></div>
             <div class="col-sm-9">
-                Plastic Bottle  : <%=data.PLASTIC_BOTTLE%><br>
-                Plastic Wrapper : <%=data.PLASTIC_WRAPPER%><br>
-                Glass Bottle    : <%=data.GLASS_BOTTLE%><br>
-                Metal Cans      : <%=data.METAL_CANS%><br>
-                Paper Waste     : <%=data.PAPER_WASTE%><br>
-                Other Waste     : <%=data.OTHER_WASTE%>
+                Plastic Bottle: <%=data.PLASTIC_BOTTLE%><br>
+                Plastic Wrapper: <%=data.PLASTIC_WRAPPER%><br>
+                Glass Bottle: <%=data.GLASS_BOTTLE%><br>
+                Metal Cans: <%=data.METAL_CANS%><br>
+                Paper Waste: <%=data.PAPER_WASTE%><br>
+                Other Waste: <%=data.OTHER_WASTE%>
             </div>
         </div>
         <br>
@@ -93,6 +100,7 @@
             <div class="col-sm-3"><h6>Contact Number</h6></div>
             <div class="col-sm-9"><%=data.DONOR_PHONE_NO%></div>
         </div>
+        <br>
         <div class="col text-center">
             <a class="edit-pickup-info" href="/get-edit-pickup/<%=data.PICKUP_REQUEST_NO%>" title="Edit">Edit</a>&nbsp;
             <a class="delete-pickup-info" data-pickup-id="<%=data.PICKUP_REQUEST_NO%>" href="" title="Delete">Delete</a>

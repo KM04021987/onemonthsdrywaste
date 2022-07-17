@@ -14,12 +14,12 @@
   color: rgb(75, 75, 202);
   cursor: pointer;
   padding: 5px;
-  padding-left: 30px;
+  padding-left: 10px;
   width: 100%;
   text-align: left;
   outline: none;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: normal;
   transition: 0.4s;
   border: 1px solid rgb(222, 227, 233);
   border-radius: 5px;
@@ -41,9 +41,9 @@
 
 .accordion:after {
   content: '\002B';
-  color: #777;
+  color: black;
   font-weight: bold;
-  float: right;
+  float: left;
   margin-left: 5px;
 }
 
@@ -60,7 +60,7 @@
 
 
 <div class="container">
-<div class="col-10 mx-auto">
+<div class="col-11 mx-auto">
         <br>
         <form method="GET" action="/get-search-donors-form/<%=receiveraccount%>">
             <button type="submit" class="btn btn-primary btn-sm">Click Here to Search with Other Location</button>
@@ -71,7 +71,7 @@
             var i=1;
             userData.forEach(function(data){
         %>
-        <button class="accordion"><%=data.FULLNAME%>[<%=data.CITY%>, <%=data.STATE%>]</button>
+        <button class="accordion">&nbsp;&nbsp;&nbsp;<%=data.FULLNAME%>[<%=data.CITY%>, <%=data.STATE%>]</button>
         <div class="panel">
             <div class="row">
                 <div class="col-sm-3"><h6>Donor's Account:</h6></div>
