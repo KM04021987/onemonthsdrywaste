@@ -70,7 +70,7 @@
         var i=1;
         userData.forEach(function(data){
     %>
-    <button class="accordion">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pickup #<%=data.PICKUP_REQUEST_NO%> [Created on <%= data.ADD_TS.substring(0,10)%>]</button>
+    <button class="accordion">&nbsp;&nbsp;&nbsp;Pickup #<%=data.PICKUP_REQUEST_NO%> [Created on <%= data.ADD_TS.substring(0,10)%>]</button>
     <div class="panel">
         <div class="row">
             <div class="col-sm-3"><h6>Pickup Request Date & Time</h6></div>
@@ -102,7 +102,7 @@
         </div>
         <br>
         <div class="col text-center">
-            <a class="edit-pickup-info" href="/get-edit-pickup/<%=data.PICKUP_REQUEST_NO%>" title="Edit">Edit</a>&nbsp;
+            <a class="edit-pickup-info" href="/get-edit-pickup/<%=data.PICKUP_REQUEST_NO%>" title="Edit">Edit</a>&nbsp;&nbsp;
             <a class="delete-pickup-info" data-pickup-id="<%=data.PICKUP_REQUEST_NO%>" href="" title="Delete">Delete</a>
         </div>
     </div>
