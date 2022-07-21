@@ -43,7 +43,7 @@ let extractPickupRequest = (donoraccount) => {
         try {
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
-                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE donor_account=? ORDER BY PICKUP_REQUEST_NO DESC with ur;", [donoraccount], function(err, rows) {
+                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE donor_account=? ORDER BY LAST_UPDATED_TS DESC with ur;", [donoraccount], function(err, rows) {
                     if (err) {
                         console.log(err)
                         reject(err)
@@ -138,7 +138,7 @@ let getPickupList = (RECEIVER_COUNTRY, RECEIVER_STATE, RECEIVER_PIN_OR_ZIP) => {
         try {
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
-                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE donor_Country = ? and donor_state = ? and donor_PIN_OR_ZIP = ?  ORDER BY ADD_TS DESC with ur;", [RECEIVER_COUNTRY, RECEIVER_STATE, RECEIVER_PIN_OR_ZIP], function(err, rows) {
+                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE donor_Country = ? and donor_state = ? and donor_PIN_OR_ZIP = ?  ORDER BY LAST_UPDATED_TS DESC with ur;", [RECEIVER_COUNTRY, RECEIVER_STATE, RECEIVER_PIN_OR_ZIP], function(err, rows) {
                     if (err) {
                         console.log(err)
                         reject(err)
