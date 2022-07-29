@@ -45,7 +45,7 @@ else {
             <br>
             <h6>Please select all types of dry waste to be picked up.</h6>
             <br>
-            <form method="POST" action="/post-new-pickup-request/<%=donoraccount%>">      
+            <form method="POST" action="/post-new-pickup-request/<%=donoraccount%>" enctype="multipart/form-data">      
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label>Plastic Bottles</label>
@@ -163,13 +163,80 @@ else {
                     <input type="text" class="form-control" id="phone" name="phone" placeholder="Please Enter Phone Number" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-sm">Create a Pickup Request</button>
+                <br>
+                <h6>Do you want to upload a photo of the drywaste?
+                <br>
+                <br>
+
+                <div class="form-group">
+                    <label style="font-weight: normal;">
+                        <input type="radio" id="radio_button_no" value="no" name="radiobutton" onclick="javascript:myFunction();" checked/>
+                        No &nbsp;
+                        <input type="radio" id="radio_button_yes" value="yes" name="radiobutton" onclick="javascript:myFunction();" />
+                        Yes
+                    </label>
+                </div>
+
+                <div id="div_image" style="display: none;">
+                    <div class="form-group">
+                        <label>Upload Image [Only .jpeg, .jpg, .png, .gif, .webp files are allowed]</label>
+                        <input type="file" id="uploaded_image" name="uploaded_image" class="form-control" onchange="return fileValidation()">
+                    </div>
+                </div>
+                
+
+                <button type="submit" class="btn btn-primary btn-sm" onClick="showAlert()">Create a Pickup Request</button>
             </form>
         </div>
     </div>
     <br>
     <br>
 </div>
+
+<script>
+    function myFunction() {
+        var yes = document.getElementById("radio_button_yes");
+        var div_image = document.getElementById("div_image");
+        if (yes.checked === true) {
+            div_image.style.display = "block";
+        } else {
+            div_image.style.display = "none";
+        }
+    }
+</script>
+
+<script>
+    function fileValidation() {
+        var fileInput =
+            document.getElementById('uploaded_image');
+         
+        var filePath = fileInput.value;
+     
+        // Allowing file type
+        var allowedExtensions =
+                /(\.jpg|\.jpeg|\.png|\.gif|\.webp)$/i;
+         
+       if (!allowedExtensions.exec(filePath)) {
+            alert('Invalid file type');
+            fileInput.value = '';
+            return false;
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    function showAlert() {
+        var fileInput =
+            document.getElementById('uploaded_image');
+        var fileLength = fileInput.files.length
+        
+        if (fileLength == 0 && document.getElementById("radio_button_yes").checked == true) {
+            //Radio Button is "Yes", but no file is attached. So, reassiging the radio button value to "No"
+            document.getElementById("radio_button_yes").value = "no"
+            alert('No photo is attached. Pickup request will be submitted without photo')
+        }
+    }
+</script>
 
 </body>
 </html>

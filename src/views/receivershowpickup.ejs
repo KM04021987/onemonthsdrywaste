@@ -103,6 +103,20 @@
             </div>
             <br>
 
+            <div class="row">
+              <div class="col-sm-3"><h6>Photo of Dry-wastes :</h6></div>
+              <% if (data.DRYWASTE_IMAGE > '') { %>
+                <div class="col-md-8 col-lg-7 col-xl-6">
+                  <img src="../images/uploaded_images/<%=data.DRYWASTE_IMAGE%>" class="img-fluid">
+                </div>
+              <% } else {%>
+                <div class="col-sm-9">
+                  None
+                </div>
+              <% } %>
+            </div>
+            <br>
+
             
             <p class="col text-center">If you are interested to contact the Donor, please send a note in the below description area, and click on "Send Message" Button.</p>
             

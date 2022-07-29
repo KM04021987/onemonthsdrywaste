@@ -6,11 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--Bootstrap-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    
-<!--Ajax-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<!--JavaScript-->    
-    <script src="/js/donorpickup.js"></script>
 
 <script type="text/javascript">
 var statesByCountry = {
@@ -49,7 +44,7 @@ else {
         <br>
         <h6>Please update all types of dry waste to be picked up.</h6>
         <br>
-        <form id="formEditPickup">
+        <form method="POST" action="/put-edit-pickup/<%=PICKUP_REQUEST_NO%>" enctype="multipart/form-data" >
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Plastic Bottles</label>
@@ -168,16 +163,103 @@ else {
                 <label>Phone Number</label>
                 <input type="text" class="form-control" id="phone" name="phone" placeholder="Please Enter Phone Number" value="<%=DONOR_PHONE_NO%>">
             </div>
+
+            <br>
+            <div class="row">
+                <div class="col-sm-3"><h6>Photo of Dry-wastes :</h6></div>
+                <% if (DRYWASTE_IMAGE > '') { %>
+                  <div class="col-md-8 col-lg-7 col-xl-6">
+                    <img src="../images/uploaded_images/<%=DRYWASTE_IMAGE%>" class="img-fluid">
+                  </div>
+                <% } else {%>
+                  <div class="col-sm-9">
+                    None
+                  </div>
+                <% } %>
+            </div>
+
+            <br>
+            <h6>Do you want to upload/update the photo of the drywaste?
+            <br>
+            <br>
+
+            <div class="form-group">
+                <label style="font-weight: normal;">
+                    <input type="radio" id="radio_button_no" value="no" name="radiobutton" onclick="javascript:myFunction();" checked/>
+                    No &nbsp;
+                    <input type="radio" id="radio_button_yes" value="yes" name="radiobutton" onclick="javascript:myFunction();" />
+                    Yes
+                </label>
+            </div>
+
+            <div id="div_image" style="display: none;">
+                <div class="form-group">
+                    <label>Upload Image [Only .jpeg, .jpg, .png, .gif, .webp files are allowed]</label>
+                    <input type="file" id="uploaded_image" name="uploaded_image" class="form-control" onchange="return fileValidation()">
+                </div>
+            </div>
             
             <input type="hidden" id="donoraccount" name="donoraccount" value="<%=donoraccount%>">
+            <input type="hidden" id="pickuprequestno" name="pickuprequestno" value="<%=PICKUP_REQUEST_NO%>">
 
-            <button type="button" class="btn btn-primary btn-sm" id="btnEditPickup" data-pickup-id="<%=PICKUP_REQUEST_NO%>">Update Request</button>
+            <button type="submit" class="btn btn-primary btn-sm" onClick="showAlert()">Update Request</button>
         </form>
         <br>
         <br>
         <br>
     </div>
 </div>
+
+
+<script>
+    function myFunction() {
+        var yes = document.getElementById("radio_button_yes");
+        var div_image = document.getElementById("div_image");
+        if (yes.checked === true) {
+            div_image.style.display = "block";
+        } else {
+            div_image.style.display = "none";
+        }
+    }
+</script>
+
+<script>
+    function fileValidation() {
+        var fileInput =
+            document.getElementById('uploaded_image');
+         
+        var filePath = fileInput.value;
+     
+        // Allowing file type
+        var allowedExtensions =
+                /(\.jpg|\.jpeg|\.png|\.gif|\.webp)$/i;
+
+        if (!allowedExtensions.exec(filePath)) {
+            alert('Invalid file type');
+            fileInput.value = '';
+            return false;
+        }
+    }
+</script>
+
+
+<script type="text/javascript">
+    function showAlert() {
+        var fileInput =
+            document.getElementById('uploaded_image');
+        var fileLength = fileInput.files.length
+        
+        if (fileLength == 0 && document.getElementById("radio_button_yes").checked == true) {
+            //Radio Button is "Yes", but no file is attached. So, reassiging the radio button value to "No"
+            document.getElementById("radio_button_yes").value = "no"
+            alert('No photo is attached. Pickup request will be updated without photo')
+        }
+
+        if(fileLength == 1) {
+            alert('Pickup request will be updated with photo')  
+        }
+    }
+</script>
 
 </body>
 </html>

@@ -43,10 +43,44 @@ let getRequestANewPickupForm = async (req, res) => {
     })
 }
 
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: function (req, file, callback) {
+        callback(null, './src/public/images/uploaded_images/')
+    },
+    filename: function (req, file, callback) {
+        const mimeExtension = {
+            'image/jpeg': '.jpeg',
+            'image/jpg': '.jpg',
+            'image/png': '.png',
+            'image/gif': '.gif',
+            'image/webp': '.webp',
+        }
+        callback(null, file.fieldname + '-' + Date.now() + mimeExtension[file.mimetype]);
+    }
+})
+
+const uploadImage = multer({
+    storage: storage,
+    fileFilter: (req, file, callback) => {
+        if(file.mimetype === 'image/jpeg' || 
+        file.mimetype === 'image/jpg' || 
+        file.mimetype === 'image/png' ||
+        file.mimetype === 'image/gif' ||
+        file.mimetype === 'image/webp') {
+            callback(null, true);
+        } else {
+            callback(null, false);
+            req.fileError = 'File format is not valid';
+        }
+    }
+ })
+
 let postNewPickupRequest = async (req, res) => {
     console.log('donorProfileController: postNewPickupRequest')
 
     const donoraccount = req.params.id
+    const radiobutton = req.body.radiobutton
     //create a pickup request
     let pickupRequest = {
         donoraccount: donoraccount,
@@ -63,24 +97,48 @@ let postNewPickupRequest = async (req, res) => {
         address: req.body.address,
         phone: req.body.phone
     };
-    await pickuprequestService.createPickupRequest(pickupRequest).then(() => {
-        pickuprequestService.getPickupRequestNumber(donoraccount).then((data) => {
-            const jsonData = JSON.stringify(data)
-            const removebracket1 = jsonData.replace('[','')
-            const removebracket2 = removebracket1.replace(']','')
-            const jsonParseobj = JSON.parse(removebracket2)
-            const pickupRequestNumber = jsonParseobj.PICKUP_REQUEST_NO
+    
+    if (radiobutton === 'yes') {
+        const img = req.file.filename
+        await pickuprequestService.createPickupRequestWithFile(pickupRequest, img).then(() => {
+            pickuprequestService.getPickupRequestNumber(donoraccount).then((data) => {
+                const jsonData = JSON.stringify(data)
+                const removebracket1 = jsonData.replace('[','')
+                const removebracket2 = removebracket1.replace(']','')
+                const jsonParseobj = JSON.parse(removebracket2)
+                const pickupRequestNumber = jsonParseobj.PICKUP_REQUEST_NO
 
-            return res.render("donorpostnewpickuprequest.ejs", {
-                donoraccount: donoraccount,
-                pickupRequestNumber: pickupRequestNumber
-            })
+                return res.render("donorpostnewpickuprequest.ejs", {
+                    donoraccount: donoraccount,
+                    pickupRequestNumber: pickupRequestNumber
+                })
+            }).catch(error => {
+                console.log("error while fetching pickup request(With File)")
+            });
         }).catch(error => {
-            console.log("error while fetching pickup request")
+            console.log("error while creating a new pickup request(With File)")
         });
-    }).catch(error => {
-        console.log("error while creating a new pickup request")
-    });
+    }
+    else {
+        await pickuprequestService.createPickupRequestWithoutFile(pickupRequest).then(() => {
+            pickuprequestService.getPickupRequestNumber(donoraccount).then((data) => {
+                const jsonData = JSON.stringify(data)
+                const removebracket1 = jsonData.replace('[','')
+                const removebracket2 = removebracket1.replace(']','')
+                const jsonParseobj = JSON.parse(removebracket2)
+                const pickupRequestNumber = jsonParseobj.PICKUP_REQUEST_NO
+
+                return res.render("donorpostnewpickuprequest.ejs", {
+                    donoraccount: donoraccount,
+                    pickupRequestNumber: pickupRequestNumber
+                })
+            }).catch(error => {
+                console.log("error while fetching pickup request(Without File")
+            });
+        }).catch(error => {
+            console.log("error while creating a new pickup request(Without File")
+        });
+    }
 };
 
 let getRequestsHistory = async (req, res) => {
@@ -123,6 +181,7 @@ let getEditPickup = async (req, res) => {
     const jsonDONOR_PIN_OR_ZIP = jsonParseobj.DONOR_PIN_OR_ZIP
     const jsonDONOR_ADDRESS = jsonParseobj.DONOR_ADDRESS
     const jsonDONOR_PHONE_NO = jsonParseobj.DONOR_PHONE_NO
+    const jsonDRYWASTE_IMAGE = jsonParseobj.DRYWASTE_IMAGE
 
     return res.render("donoreditpickup.ejs", {
         donoraccount: jsonDONOR_ACCOUNT,
@@ -139,7 +198,8 @@ let getEditPickup = async (req, res) => {
         DONOR_CITY: jsonDONOR_CITY,
         DONOR_PIN_OR_ZIP: jsonDONOR_PIN_OR_ZIP,
         DONOR_ADDRESS: jsonDONOR_ADDRESS,
-        DONOR_PHONE_NO: jsonDONOR_PHONE_NO
+        DONOR_PHONE_NO: jsonDONOR_PHONE_NO,
+        DRYWASTE_IMAGE: jsonDRYWASTE_IMAGE
     })
     }).catch(error => {
     console.log('error while fetching pickup request')
@@ -151,46 +211,83 @@ let putEditPickup = async (req, res) => {
     const jsonData = JSON.stringify(req.user)
     const jsonParseObj = JSON.parse(jsonData)
     const jsonaccount = jsonParseObj.ACCOUNT
-    try {
-        let item = {
-            donoraccount: jsonaccount,
-            requestno: req.body.id,
-            plasticbottle: req.body.plasticbottle,
-            plastcwrapper: req.body.plastcwrapper,
-            glassbottle: req.body.glassbottle,
-            metalcans: req.body.metalcans,
-            paperbox: req.body.paperbox,
-            others: req.body.others,
-            country: req.body.country,
-            state: req.body.state,
-            city: req.body.city,
-            pin: req.body.pin,
-            address: req.body.address,
-            phone: req.body.phone
-        };
-        await pickuprequestService.updatePickupInfo(item);
-        return res.status(200).json({
-            message: 'update info pickup successful'
+    const radiobutton = req.body.radiobutton
+    const pickuprequestno = req.params.id
+
+    let item = {
+        donoraccount: jsonaccount,
+        requestno: pickuprequestno,
+        plasticbottle: req.body.plasticbottle,
+        plastcwrapper: req.body.plastcwrapper,
+        glassbottle: req.body.glassbottle,
+        metalcans: req.body.metalcans,
+        paperbox: req.body.paperbox,
+        others: req.body.others,
+        country: req.body.country,
+        state: req.body.state,
+        city: req.body.city,
+        pin: req.body.pin,
+        address: req.body.address,
+        phone: req.body.phone
+    };
+
+    if (radiobutton === 'yes') {
+        const img = req.file.filename
+        await pickuprequestService.deletePhysicalFile(req.params.id).then(() => {
+            pickuprequestService.updatePickupInfoWithFile(item, img).then(() => {
+                pickuprequestService.extractPickupRequest(jsonaccount).then((data) => {
+                    return res.render("donorrequestshistory.ejs",{
+                        donoraccount: jsonaccount,
+                        userData: data
+                    });
+                }).catch(error => {
+                    console.log('error while extracting list of pickup requests')
+                });
+            }).catch(error => {
+                console.log("error while updating the pickup request(With File)")
+            });
+        }).catch(error => {
+            console.log("error while deleting the Physical File if exists")
         });
-    } catch (e) {
-        console.log(e)
-        return res.status(500).json(e);
+    }
+    else {
+        await pickuprequestService.updatePickupInfoWithoutFile(item).then(() => {
+            pickuprequestService.extractPickupRequest(jsonaccount).then((data) => {
+                return res.render("donorrequestshistory.ejs",{
+                    donoraccount: jsonaccount,
+                    userData: data
+                });
+            }).catch(error => {
+                console.log('error while extracting list of pickup requests')
+            });
+        }).catch(error => {
+            console.log("error while updating the pickup request(Without File)")
+        });
     }
 };
 
 
 let deletePickupById = async (req, res) => {
     console.log('donorProfileController: deletePickupById')
-    try {
-        let pickup = await pickuprequestService.deletePickupById(req.body.id);
-        return res.status(200).json({
-            'message': 'success'
-        })
-
-    } catch (e) {
-        console.log(e);
-        return res.status(500).json(e);
-    }
+    const jsonData = JSON.stringify(req.user)
+    const jsonParseObj = JSON.parse(jsonData)
+    const jsonaccount = jsonParseObj.ACCOUNT
+    await pickuprequestService.deletePhysicalFile(req.params.id).then(() => {
+        pickuprequestService.deletePickupById(req.params.id).then(() => {
+            pickuprequestService.extractPickupRequest(jsonaccount).then((data) => {
+                return res.render("donorrequestshistory.ejs",{
+                    donoraccount: jsonaccount,
+                    userData: data
+                });
+            }).catch(error => {
+                console.log('error while extracting the list of pickup requests')
+            });
+        }).catch(error => {
+            console.log("error while deleting the pickup request from DB2 table")
+        });
+    }).catch(error => {
+        console.log("error while deleting the Physical File if exists")
+    });
 };
 
 let getSearchReceiversForm = async (req, res) => {
@@ -328,6 +425,7 @@ let refreshDonorRealtime = async (req, res) => {
 module.exports = {
     handleDonorPage: handleDonorPage,
 
+    uploadImage: uploadImage,
     getRequestANewPickupForm: getRequestANewPickupForm,
     postNewPickupRequest: postNewPickupRequest,
 
