@@ -2,12 +2,12 @@ require('dotenv').config();
 const ibmdb = require('ibm_db');
 let connStr = "DATABASE="+process.env.DB_DATABASE+";HOSTNAME="+process.env.DB_HOSTNAME+";PORT="+process.env.DB_PORT+";UID="+process.env.DB_UID+";PWD="+process.env.DB_PWD+";PROTOCOL=TCPIP;SECURITY=SSL";
 
-let createPickupRequestWithFile = (data, img) => {
+let createPickupRequestWithFile = (data, cloudinary_public_id, cloudinary_secure_url) => {
     console.log('pickuprequestService: createPickupRequestWithFile')
     return new Promise(async (resolve, reject) => {
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
-                conn.query("INSERT INTO "+process.env.DB_SCHEMA+".pickup_request(DONOR_ACCOUNT, PLASTIC_BOTTLE, PLASTIC_WRAPPER, GLASS_BOTTLE, METAL_CANS, PAPER_WASTE, OTHER_WASTE, DONOR_COUNTRY, DONOR_STATE, DONOR_CITY, DONOR_PIN_OR_ZIP, DONOR_ADDRESS, DONOR_PHONE_NO, DRYWASTE_IMAGE) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", [data.donoraccount, data.plasticbottle, data.plastcwrapper, data.glassbottle, data.metalcans, data.paperbox, data.others, data.country, data.state, data.city, data.pin, data.address, data.phone, img], function(err, rows) {
+                conn.query("INSERT INTO "+process.env.DB_SCHEMA+".pickup_request(DONOR_ACCOUNT, PLASTIC_BOTTLE, PLASTIC_WRAPPER, GLASS_BOTTLE, METAL_CANS, PAPER_WASTE, OTHER_WASTE, DONOR_COUNTRY, DONOR_STATE, DONOR_CITY, DONOR_PIN_OR_ZIP, DONOR_ADDRESS, DONOR_PHONE_NO, IMAGE_CLOUDINARY_PUBLIC_ID, IMAGE_CLOUDINARY_SECURE_URL) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", [data.donoraccount, data.plasticbottle, data.plastcwrapper, data.glassbottle, data.metalcans, data.paperbox, data.others, data.country, data.state, data.city, data.pin, data.address, data.phone, cloudinary_public_id, cloudinary_secure_url], function(err, rows) {
                     if (err) {
                         reject(false)
                     }
@@ -94,12 +94,12 @@ let getPickupForEditPage = (pickuprequestno) => {
     });
 };
 
-let updatePickupInfoWithFile = (data, img) => {
+let updatePickupInfoWithFile = (data, cloudinary_public_id, cloudinary_secure_url) => {
     console.log('pickuprequestService: updatePickupInfoWithFile')
     return new Promise(async (resolve, reject) => {
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
-                conn.query("UPDATE "+process.env.DB_SCHEMA+".pickup_request SET DONOR_ACCOUNT = ?, PLASTIC_BOTTLE = ?, PLASTIC_WRAPPER= ?, GLASS_BOTTLE= ?, METAL_CANS= ?, PAPER_WASTE= ?, OTHER_WASTE= ?, DONOR_COUNTRY= ?, DONOR_STATE= ?, DONOR_CITY= ?, DONOR_PIN_OR_ZIP= ?, DONOR_ADDRESS= ?, DONOR_PHONE_NO= ?, DRYWASTE_IMAGE = ? where pickup_request_no = ?;", [data.donoraccount, data.plasticbottle, data.plastcwrapper, data.glassbottle, data.metalcans, data.paperbox, data.others, data.country, data.state, data.city, data.pin, data.address, data.phone, img, data.requestno], function(err, rows) {
+                conn.query("UPDATE "+process.env.DB_SCHEMA+".pickup_request SET DONOR_ACCOUNT = ?, PLASTIC_BOTTLE = ?, PLASTIC_WRAPPER= ?, GLASS_BOTTLE= ?, METAL_CANS= ?, PAPER_WASTE= ?, OTHER_WASTE= ?, DONOR_COUNTRY= ?, DONOR_STATE= ?, DONOR_CITY= ?, DONOR_PIN_OR_ZIP= ?, DONOR_ADDRESS= ?, DONOR_PHONE_NO= ?, IMAGE_CLOUDINARY_PUBLIC_ID = ?, IMAGE_CLOUDINARY_SECURE_URL = ? where pickup_request_no = ?;", [data.donoraccount, data.plasticbottle, data.plastcwrapper, data.glassbottle, data.metalcans, data.paperbox, data.others, data.country, data.state, data.city, data.pin, data.address, data.phone, cloudinary_public_id, cloudinary_secure_url, data.requestno], function(err, rows) {
                     if (err) {
                         console.log(err)
                         reject(false)
@@ -126,6 +126,14 @@ let updatePickupInfoWithoutFile = (data) => {
     });
 };
 
+
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
+});
+
 let deletePhysicalFile = (id) => {
     console.log('pickuprequestService: deletePhysicalFile')
     return new Promise((resolve, reject) => {
@@ -137,23 +145,15 @@ let deletePhysicalFile = (id) => {
                         reject(err)
                     }
                     else {
-                    let fileinfo = rows;
-                    const jsonData = JSON.stringify(fileinfo)
+                    let pickupinfo = rows;
+                    const jsonData = JSON.stringify(pickupinfo)
                     const removebracket1 = jsonData.replace('[','')
                     const removebracket2 = removebracket1.replace(']','')
                     const jsonParseobj = JSON.parse(removebracket2)
-                    const filename = jsonParseobj.DRYWASTE_IMAGE
-                    if (filename > '') {
-                        const fs = require('fs')
-                        const path = './src/public/images/uploaded_images/'+filename
-                        fs.unlink(path, (err) => {
-                        if (err) {
-                            console.log(err)
-                        }
-                        else {
-                            console.log('file is removed')
-                            }
-                        })
+                    const public_id = jsonParseobj.IMAGE_CLOUDINARY_PUBLIC_ID
+                    if (public_id > '') {
+                        cloudinary.uploader.destroy(public_id, function(result) { console.log('File is removed from Cloudinary') });
+
                     }
                     resolve();
                     }

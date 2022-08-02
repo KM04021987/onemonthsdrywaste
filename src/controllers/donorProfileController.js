@@ -44,24 +44,15 @@ let getRequestANewPickupForm = async (req, res) => {
 }
 
 const multer = require('multer');
-const storage = multer.diskStorage({
-    destination: function (req, file, callback) {
-        callback(null, './src/public/images/uploaded_images/')
-    },
-    filename: function (req, file, callback) {
-        const mimeExtension = {
-            'image/jpeg': '.jpeg',
-            'image/jpg': '.jpg',
-            'image/png': '.png',
-            'image/gif': '.gif',
-            'image/webp': '.webp',
-        }
-        callback(null, file.fieldname + '-' + Date.now() + mimeExtension[file.mimetype]);
-    }
-})
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
+});
 
 const uploadImage = multer({
-    storage: storage,
+    storage: multer.diskStorage({}),
     fileFilter: (req, file, callback) => {
         if(file.mimetype === 'image/jpeg' || 
         file.mimetype === 'image/jpg' || 
@@ -99,8 +90,10 @@ let postNewPickupRequest = async (req, res) => {
     };
     
     if (radiobutton === 'yes') {
-        const img = req.file.filename
-        await pickuprequestService.createPickupRequestWithFile(pickupRequest, img).then(() => {
+        const result = await cloudinary.uploader.upload(req.file.path);
+        const cloudinary_public_id = result.public_id
+        const cloudinary_secure_url = result.secure_url
+        await pickuprequestService.createPickupRequestWithFile(pickupRequest, cloudinary_public_id, cloudinary_secure_url).then(() => {
             pickuprequestService.getPickupRequestNumber(donoraccount).then((data) => {
                 const jsonData = JSON.stringify(data)
                 const removebracket1 = jsonData.replace('[','')
@@ -133,10 +126,10 @@ let postNewPickupRequest = async (req, res) => {
                     pickupRequestNumber: pickupRequestNumber
                 })
             }).catch(error => {
-                console.log("error while fetching pickup request(Without File")
+                console.log("error while fetching pickup request(Without File)")
             });
         }).catch(error => {
-            console.log("error while creating a new pickup request(Without File")
+            console.log("error while creating a new pickup request(Without File)")
         });
     }
 };
@@ -181,7 +174,7 @@ let getEditPickup = async (req, res) => {
     const jsonDONOR_PIN_OR_ZIP = jsonParseobj.DONOR_PIN_OR_ZIP
     const jsonDONOR_ADDRESS = jsonParseobj.DONOR_ADDRESS
     const jsonDONOR_PHONE_NO = jsonParseobj.DONOR_PHONE_NO
-    const jsonDRYWASTE_IMAGE = jsonParseobj.DRYWASTE_IMAGE
+    const jsonIMAGE_CLOUDINARY_SECURE_URL = jsonParseobj.IMAGE_CLOUDINARY_SECURE_URL
 
     return res.render("donoreditpickup.ejs", {
         donoraccount: jsonDONOR_ACCOUNT,
@@ -199,7 +192,7 @@ let getEditPickup = async (req, res) => {
         DONOR_PIN_OR_ZIP: jsonDONOR_PIN_OR_ZIP,
         DONOR_ADDRESS: jsonDONOR_ADDRESS,
         DONOR_PHONE_NO: jsonDONOR_PHONE_NO,
-        DRYWASTE_IMAGE: jsonDRYWASTE_IMAGE
+        IMAGE_CLOUDINARY_SECURE_URL: jsonIMAGE_CLOUDINARY_SECURE_URL
     })
     }).catch(error => {
     console.log('error while fetching pickup request')
@@ -232,9 +225,11 @@ let putEditPickup = async (req, res) => {
     };
 
     if (radiobutton === 'yes') {
-        const img = req.file.filename
+        const result = await cloudinary.uploader.upload(req.file.path);
+        const cloudinary_public_id = result.public_id
+        const cloudinary_secure_url = result.secure_url
         await pickuprequestService.deletePhysicalFile(req.params.id).then(() => {
-            pickuprequestService.updatePickupInfoWithFile(item, img).then(() => {
+            pickuprequestService.updatePickupInfoWithFile(item, cloudinary_public_id, cloudinary_secure_url).then(() => {
                 pickuprequestService.extractPickupRequest(jsonaccount).then((data) => {
                     return res.render("donorrequestshistory.ejs",{
                         donoraccount: jsonaccount,

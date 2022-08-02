@@ -100,9 +100,9 @@
 
         <div class="row">
           <div class="col-sm-3"><h6>Photo of Dry-wastes :</h6></div>
-          <% if (data.DRYWASTE_IMAGE > '') { %>
+          <% if (data.IMAGE_CLOUDINARY_SECURE_URL > '') { %>
             <div class="col-md-8 col-lg-7 col-xl-6">
-              <img src="../images/uploaded_images/<%=data.DRYWASTE_IMAGE%>" class="img-fluid">
+              <img src="<%=data.IMAGE_CLOUDINARY_SECURE_URL%>" class="img-fluid">
             </div>
           <% } else {%>
             <div class="col-sm-9">
