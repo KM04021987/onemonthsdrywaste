@@ -1,6 +1,7 @@
 import pickuprequestService from "./../services/pickuprequestService";
 import messageinfoService from "./../services/messageinfoService";
 import donorloginService from "./../services/donorloginService";
+import donorregisterService from "./../services/donorregisterService";
 
 let handleDonorPage = async (req, res) => {
     console.log('donorProfileController: handleDonorPage')
@@ -32,6 +33,158 @@ let handleDonorPage = async (req, res) => {
             });
         }
     })
+};
+
+let getDonorEditProfile = async (req, res) => {
+    console.log('donorProfileController: getDonorEditProfile')
+    const donoraccount = req.params.id
+
+    await donorloginService.findUserByAccount(donoraccount).then((profile) => {
+        const jsonData = JSON.stringify(profile)
+        const removebracket1 = jsonData.replace('[','')
+        const removebracket2 = removebracket1.replace(']','')
+        const jsonParseobj = JSON.parse(removebracket2)
+
+        const fullname = jsonParseobj.FULLNAME
+        const phone = jsonParseobj.PHONE_NO
+        const country = jsonParseobj.COUNTRY
+        const state = jsonParseobj.STATE
+        const city = jsonParseobj.CITY
+        const pin = jsonParseobj.PIN_OR_ZIP
+        const address = jsonParseobj.ADDRESS
+
+    return res.render("donoreditprofile.ejs", {
+        donoraccount: donoraccount,
+        fullname: fullname,
+        phone: phone,
+        country: country,
+        state: state,
+        city: city,
+        pin: pin,
+        address: address
+    })
+    }).catch(error => {
+        console.log('error while fetching donor profile for the donor edit page')
+    });
+};
+
+let postDonorEditProfile = async (req, res) => {
+    console.log('donorProfileController: postDonorEditProfile')
+
+    //Update donor's profile
+    let updateDonor = {
+        donoraccount: req.params.id,
+        phone: req.body.phone,
+        country: req.body.country,
+        state: req.body.state,
+        city: req.body.city,
+        pin: req.body.pin,
+        address: req.body.address
+    };
+
+    try {
+        await donorregisterService.updateDonorProfile(updateDonor);
+        return res.redirect("/dprofile")
+    } catch (err) {
+        if (err == '') {
+            return res.render("donorprofilealert.ejs",{
+                donoraccount: updateDonor.donoraccount,
+                message_header: "Error!!!",
+                message_body: "Something is wrong. Error while updating the profile. "
+            });
+        }
+        else {
+            return res.render("donorprofilealert.ejs",{
+                donoraccount: updateDonor.donoraccount,
+                message_header: "Error!!!",
+                message_body: err
+            });
+        }
+    }
+};
+
+let getDonorChangePassword = async (req, res) => {
+    console.log('donorProfileController: getDonorChangePassword')
+    const donoraccount = req.params.id
+
+    await donorloginService.findUserByAccount(donoraccount).then((profile) => {
+        const jsonData = JSON.stringify(profile)
+        const removebracket1 = jsonData.replace('[','')
+        const removebracket2 = removebracket1.replace(']','')
+        const jsonParseobj = JSON.parse(removebracket2)
+
+        const fullname = jsonParseobj.FULLNAME
+        const phone = jsonParseobj.PHONE_NO
+        const country = jsonParseobj.COUNTRY
+        const state = jsonParseobj.STATE
+        const city = jsonParseobj.CITY
+        const pin = jsonParseobj.PIN_OR_ZIP
+        const address = jsonParseobj.ADDRESS
+
+    return res.render("donorchangepassword.ejs", {
+        donoraccount: donoraccount,
+        fullname: fullname,
+        phone: phone,
+        country: country,
+        state: state,
+        city: city,
+        pin: pin,
+        address: address
+    })
+    }).catch(error => {
+        console.log('error while fetching donor profile for the change password page')
+    });
+};
+
+let postDonorChangePassword = async (req, res) => {
+    console.log('donorProfileController: postDonorChangePassword')
+    const jsonData = JSON.stringify(req.user)
+    const jsonParseObj = JSON.parse(jsonData)
+    const savedPassword = jsonParseObj.PASSWORD
+
+    //Update donor's password
+    let updatePassword = {
+        donoraccount: req.params.id,
+        oldpassword: req.body.opassword,
+        newpassword: req.body.password,
+        passwordConfirmation: req.body.passwordConfirmation,
+        savedPassword: savedPassword
+    };
+
+    try {
+        await donorregisterService.updateDonorPassword(updatePassword);
+        return res.redirect("/dprofile")
+    } catch (err) {
+        if (err == '') {
+            return res.render("donorprofilealert.ejs",{
+                donoraccount: updatePassword.donoraccount,
+                message_header: "Error!!!",
+                message_body: "Something is wrong. Error while changing the password. "
+            });
+        }
+        else {
+            return res.render("donorprofilealert.ejs",{
+                donoraccount: updatePassword.donoraccount,
+                message_header: "Error!!!",
+                message_body: err
+            });
+        }
+    }
+};
+
+let deleteProfile = async (req, res) => {
+    console.log('donorProfileController: deleteProfile')
+    const donoraccount = req.params.id
+    
+    await donorregisterService.deleteProfile(donoraccount).then(() => {
+        return res.redirect("/dlogin")
+    }).catch(error => {
+        return res.render("donorprofilealert.ejs",{
+            donoraccount: donoraccount,
+            message_header: "Error!!!",
+            message_body: "Something is wrong. Error while deleting the profile. "
+        });
+    });
 };
 
 
@@ -419,6 +572,12 @@ let refreshDonorRealtime = async (req, res) => {
 
 module.exports = {
     handleDonorPage: handleDonorPage,
+
+    getDonorEditProfile: getDonorEditProfile,
+    postDonorEditProfile: postDonorEditProfile,
+    getDonorChangePassword: getDonorChangePassword,
+    postDonorChangePassword: postDonorChangePassword,
+    deleteProfile: deleteProfile,
 
     uploadImage: uploadImage,
     getRequestANewPickupForm: getRequestANewPickupForm,

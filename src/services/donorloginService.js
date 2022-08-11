@@ -69,8 +69,8 @@ let comparePassword = (password, user) => {
         try {
             const jsonData = JSON.stringify(user)
             const jsonDataObj = JSON.parse(jsonData)
-            const jsonPaswordNospace = jsonDataObj.PASSWORD.replace(/\s/g, '')
-            await bcrypt.compare(password, jsonPaswordNospace).then((isMatch) => {
+            const jsonPasword = jsonDataObj.PASSWORD
+            await bcrypt.compare(password, jsonPasword).then((isMatch) => {
                 if (isMatch) {
                     resolve(true);
                 } else {
