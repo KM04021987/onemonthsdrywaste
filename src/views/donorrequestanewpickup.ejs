@@ -124,7 +124,7 @@ else {
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label>Country</label>
-                        <select id="countrySelect" class="form-control" name="country" onchange="makeSubmenu(this.value)">
+                        <select id="countrySelect" class="form-control" name="country" onchange="makeSubmenu(this.value)" required>
                             <option selected></option>
                             <option>India</option>
                             <option>United States</option>
@@ -132,7 +132,7 @@ else {
                     </div>
                     <div class="form-group col-md-6">
                         <label>State</label>
-                        <select id="stateSelect" class="form-control" name="state">
+                        <select id="stateSelect" class="form-control" name="state" required>
                             <option selected></option>
                         </select>
                     </div>
@@ -145,7 +145,7 @@ else {
                     </div>
                     <div class="form-group col-md-6">
                         <label>PIN or ZIP</label>
-                        <input type="text" class="form-control" id="pin" name="pin" placeholder="Please Enter PIN or ZIP" required>
+                        <input type="text" class="form-control" id="pin" name="pin" maxlength="10" placeholder="Please Enter PIN or ZIP" required>
                     </div>
                 </div>
     
@@ -160,7 +160,7 @@ else {
 
                 <div class="form-group">
                     <label>Phone Number</label>
-                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Please Enter Phone Number" required>
+                    <input type="text" class="form-control" id="phone" name="phone" maxlength="10" placeholder="Please Enter Phone Number" required>
                 </div>
 
                 <br>
@@ -185,7 +185,7 @@ else {
                 </div>
                 
 
-                <button type="submit" class="btn btn-primary btn-sm" onClick="showAlert()">Create a Pickup Request</button>
+                <button type="submit" class="btn btn-primary btn-sm" onClick="return showAlert()">Create a Pickup Request</button>
             </form>
         </div>
     </div>
@@ -234,6 +234,13 @@ else {
             //Radio Button is "Yes", but no file is attached. So, reassiging the radio button value to "No"
             document.getElementById("radio_button_yes").value = "no"
             alert('No photo is attached. Pickup request will be submitted without photo')
+        }
+
+        var mobile_number = document.getElementById("phone").value;
+        if (isNaN(mobile_number))
+        {
+            alert("Phone number is not Numeric, please enter correctly!");
+            return false;
         }
     }
 </script>
