@@ -62,7 +62,7 @@
 
     <br>
     <form method="GET" action="/get-search-pickup-form/<%=receiveraccount%>">
-        <button type="submit" class="btn btn-primary btn-sm">Click Here to Search with Other Location</button>
+        <button type="submit" class="btn btn-outline-info btn-sm">Search with Other Location</button>
     </form>
     <br>
     <div>
@@ -74,15 +74,15 @@
         <button class="accordion">&nbsp;&nbsp;&nbsp; Pickup #<%=data.PICKUP_REQUEST_NO%> [Created on <%= data.ADD_TS.substring(0,10)%>]</button>
         <div class="panel">
             <div class="row">
-                <div class="col-sm-3"><h6>Pickup Request Date & Time</h6></div>
-                <div class="col-sm-9">
+                <div class="col-sm-3" style="font-size: 12px; font-weight: bold;"><h7>Pickup Request Date & Time</h7></div>
+                <div class="col-sm-9" style="font-size: 12px;">
                     <%=data.ADD_TS.substring(0,10)%> & <%=data.ADD_TS.substring(11,19)%>
                 </div>
             </div>
             <br>
             <div class="row">
-                <div class="col-sm-3"><h6>Recyclable Items</h6></div>
-                <div class="col-sm-9">
+                <div class="col-sm-3" style="font-size: 12px; font-weight: bold;"><h7>Recyclable Items</h7></div>
+                <div class="col-sm-9" style="font-size: 12px;">
                     Plastic Bottle  : <%=data.PLASTIC_BOTTLE%><br>
                     Plastic Wrapper : <%=data.PLASTIC_WRAPPER%><br>
                     Glass Bottle    : <%=data.GLASS_BOTTLE%><br>
@@ -93,18 +93,18 @@
             </div>
             <br>
             <div class="row">
-                <div class="col-sm-3"><h6>Pickup Location</h6></div>
-                <div class="col-sm-9"><%=data.DONOR_ADDRESS%><br><%=data.DONOR_CITY%>, <%=data.DONOR_STATE%><br><%=data.DONOR_COUNTRY%> <%=data.DONOR_PIN_OR_ZIP%></div>
+                <div class="col-sm-3" style="font-size: 12px; font-weight: bold;"><h7>Pickup Location</h7></div>
+                <div class="col-sm-9" style="font-size: 12px;"><%=data.DONOR_ADDRESS%><br><%=data.DONOR_CITY%>, <%=data.DONOR_STATE%><br><%=data.DONOR_COUNTRY%> <%=data.DONOR_PIN_OR_ZIP%></div>
             </div>
             <br>
             <div class="row">
-                <div class="col-sm-3"><h6>Contact Number</h6></div>
-                <div class="col-sm-9"><%=data.DONOR_PHONE_NO%></div>
+                <div class="col-sm-3" style="font-size: 12px; font-weight: bold;"><h7>Contact Number</h7></div>
+                <div class="col-sm-9" style="font-size: 12px;"><%=data.DONOR_PHONE_NO%></div>
             </div>
             <br>
 
             <div class="row">
-              <div class="col-sm-3"><h6>Photo of Dry-wastes :</h6></div>
+              <div class="col-sm-3" style="font-size: 12px; font-weight: bold;"><h7>Photo of Dry-wastes :</h7></div>
               <% if (data.IMAGE_CLOUDINARY_SECURE_URL > '') { %>
                 <div class="col-md-8 col-lg-7 col-xl-6">
                   <img src="<%=data.IMAGE_CLOUDINARY_SECURE_URL%>" class="img-fluid">
@@ -117,13 +117,12 @@
             </div>
             <br>
 
-            
-            <p class="col text-center">If you are interested to contact the Donor, please send a note in the below description area, and click on "Send Message" Button.</p>
-            
+
+            <p style="font-size: 12px; font-weight: bold;">If you are interested to contact the Donor, please send a note in the below description area, and click on "Send Message" Button.</p>
 
             <form method="POST" action="/send-message-to-pickup-request/<%=receiveraccount%>">
                 <div class="form-group">
-                    <textarea id="messageContent" name="messageContent" class="form-control" placeholder="Type your message(Maximum 250 character)"></textarea>
+                    <textarea id="messageContent" name="messageContent" class="form-control" style="font-size: 12px;" placeholder="Type your message(Maximum 250 character)"></textarea>
                 </div>
                 
                 <input type="hidden" id="donoraccount" name="donoraccount" value="<%=data.DONOR_ACCOUNT%>">
@@ -131,7 +130,7 @@
                 <input type="hidden" id="country" name="country" value="<%=country%>">
                 <input type="hidden" id="state" name="state" value="<%=state%>">
                 <input type="hidden" id="pin" name="pin" value="<%=pin%>">
-                <button type="submit" class="btn btn-outline-primary btn-sm" onClick="showMessage()">Send Message</button>  
+                <button type="submit" class="btn btn-outline-primary btn-sm" onClick="return showMessage()">Send Message</button>
             </form>
             <br>
             <br>
