@@ -83,6 +83,12 @@ let initWebRoutes = (app) => {
 /*Donor's after login - Ends*/
 
 /*Receiver's after login - Starts*/
+    router.get('/get-receiver-edit-profile/:id', receiverProfileController.getReceiverEditProfile);
+    router.post('/post-receiver-edit-profile/:id', receiverProfileController.postReceiverEditProfile);
+    router.get('/get-receiver-change-password/:id', receiverProfileController.getReceiverChangePassword);
+    router.post('/post-receiver-change-password/:id', receiverProfileController.postReceiverChangePassword);
+    router.get('/get-receiver-delete-profile/:id', receiverProfileController.deleteProfile);
+
     router.get('/get-search-pickup-form/:id', receiverProfileController.getSearchPickupForm);
     router.post('/show-list-of-pickup/:id', receiverProfileController.showListOfPickup);
     router.post('/send-message-to-pickup-request/:id', receiverProfileController.sendMessage);

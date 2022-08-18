@@ -18,6 +18,10 @@
     <h6 style="font-weight: normal; font-size: 14px;">Account Number:&nbsp; <%=receiveraccount%></h6>
     <h6 style="font-weight: normal; font-size: 14px;">Phone Number:&nbsp; <%=phone%></h6>
     <h6 style="font-weight: normal; font-size: 14px;">Address:&nbsp; <%=address%>,&nbsp;<%=city%>,&nbsp;<%=state%>,&nbsp;<%=country%>,&nbsp;<%=pin%></h6>
+    <br>
+    <a href="/get-receiver-edit-profile/<%=receiveraccount%>" title="Edit" style="text-decoration: underline;">Edit Profile</a>&nbsp;&nbsp;&nbsp;
+    <a href="/get-receiver-change-password/<%=receiveraccount%>" title="Edit" style="text-decoration: underline;">Change Password</a>&nbsp;&nbsp;&nbsp;
+    <a href="/get-receiver-delete-profile/<%=receiveraccount%>" title="Delete" onclick="return confirm('Are you sure you want to delete your profile?')" style="text-decoration: underline;">Delete Profile</a> 
 </div>  
 
 

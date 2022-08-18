@@ -1,6 +1,7 @@
 import pickuprequestService from "./../services/pickuprequestService";
 import messageinfoService from "./../services/messageinfoService";
 import receiverloginService from "./../services/receiverloginService";
+import receiverregisterService from "./../services/receiverregisterService";
 
 let handleReceiverPage = async (req, res) => {
     console.log('receiverProfileController: handleReceiverPage')
@@ -33,6 +34,162 @@ let handleReceiverPage = async (req, res) => {
         }
     })
 };
+
+let getReceiverEditProfile = async (req, res) => {
+    console.log('receiverProfileController: getReceiverEditProfile')
+    const receiveraccount = req.params.id
+
+    await receiverloginService.findUserByAccount(receiveraccount).then((profile) => {
+        const jsonData = JSON.stringify(profile)
+        const removebracket1 = jsonData.replace('[','')
+        const removebracket2 = removebracket1.replace(']','')
+        const jsonParseobj = JSON.parse(removebracket2)
+
+        const fullname = jsonParseobj.FULLNAME
+        const phone = jsonParseobj.PHONE_NO
+        const country = jsonParseobj.COUNTRY
+        const state = jsonParseobj.STATE
+        const city = jsonParseobj.CITY
+        const pin = jsonParseobj.PIN_OR_ZIP
+        const address = jsonParseobj.ADDRESS
+
+    return res.render("receivereditprofile.ejs", {
+        receiveraccount: receiveraccount,
+        fullname: fullname,
+        phone: phone,
+        country: country,
+        state: state,
+        city: city,
+        pin: pin,
+        address: address
+    })
+    }).catch(error => {
+        console.log('error while fetching receiver profile for the receiver edit page')
+    });
+};
+
+let postReceiverEditProfile = async (req, res) => {
+    console.log('receiverProfileController: postReceiverEditProfile')
+
+    //Update receiver's profile
+    let updateReceiver = {
+        receiveraccount: req.params.id,
+        phone: req.body.phone,
+        country: req.body.country,
+        state: req.body.state,
+        city: req.body.city,
+        pin: req.body.pin,
+        address: req.body.address
+    };
+
+    try {
+        await receiverregisterService.updateReceiverProfile(updateReceiver);
+        return res.redirect("/rprofile")
+    } catch (err) {
+        if (err == '') {
+            return res.render("receiverprofilealert.ejs",{
+                receiveraccount: updateReceiver.receiveraccount,
+                message_header: "Error!!!",
+                message_body: "Something is wrong. Error while updating the profile. "
+            });
+        }
+        else {
+            return res.render("receiverprofilealert.ejs",{
+                receiveraccount: updateReceiver.receiveraccount,
+                message_header: "Error!!!",
+                message_body: err
+            });
+        }
+    }
+};
+
+let getReceiverChangePassword = async (req, res) => {
+    console.log('receiverProfileController: getReceiverChangePassword')
+    const receiveraccount = req.params.id
+
+    await receiverloginService.findUserByAccount(receiveraccount).then((profile) => {
+        const jsonData = JSON.stringify(profile)
+        const removebracket1 = jsonData.replace('[','')
+        const removebracket2 = removebracket1.replace(']','')
+        const jsonParseobj = JSON.parse(removebracket2)
+
+        const fullname = jsonParseobj.FULLNAME
+        const phone = jsonParseobj.PHONE_NO
+        const country = jsonParseobj.COUNTRY
+        const state = jsonParseobj.STATE
+        const city = jsonParseobj.CITY
+        const pin = jsonParseobj.PIN_OR_ZIP
+        const address = jsonParseobj.ADDRESS
+
+    return res.render("receiverchangepassword.ejs", {
+        receiveraccount: receiveraccount,
+        fullname: fullname,
+        phone: phone,
+        country: country,
+        state: state,
+        city: city,
+        pin: pin,
+        address: address
+    })
+    }).catch(error => {
+        console.log('error while fetching receiver profile for the change password page')
+    });
+};
+
+let postReceiverChangePassword = async (req, res) => {
+    console.log('receiverProfileController: postReceiverChangePassword')
+    const jsonData = JSON.stringify(req.user)
+    const jsonParseObj = JSON.parse(jsonData)
+    const savedPassword = jsonParseObj.PASSWORD
+
+    //Update receiver's password
+    let updatePassword = {
+        receiveraccount: req.params.id,
+        oldpassword: req.body.opassword,
+        newpassword: req.body.password,
+        passwordConfirmation: req.body.passwordConfirmation,
+        savedPassword: savedPassword
+    };
+
+    try {
+        await receiverregisterService.updateReceiverPassword(updatePassword);
+        return res.redirect("/rprofile")
+    } catch (err) {
+        if (err == '') {
+            return res.render("receiverprofilealert.ejs",{
+                receiveraccount: updatePassword.receiveraccount,
+                message_header: "Error!!!",
+                message_body: "Something is wrong. Error while changing the password. "
+            });
+        }
+        else {
+            return res.render("receiverprofilealert.ejs",{
+                receiveraccount: updatePassword.receiveraccount,
+                message_header: "Error!!!",
+                message_body: err
+            });
+        }
+    }
+};
+
+let deleteProfile = async (req, res) => {
+    console.log('receiverProfileController: deleteProfile')
+    const receiveraccount = req.params.id
+    
+    await receiverregisterService.deleteProfile(receiveraccount).then(() => {
+        req.session.destroy(function(err) {
+            return res.redirect("/");
+        });
+    }).catch(error => {
+        return res.render("receiverprofilealert.ejs",{
+            donoraccount: receiveraccount,
+            message_header: "Error!!!",
+            message_body: "Something is wrong. Error while deleting the profile. "
+        });
+    });
+};
+
+
 
 let getSearchPickupForm = async (req, res) => {
     console.log('receiverProfileController: getSearchPickupForm')
@@ -225,6 +382,13 @@ let refreshReceiverRealtime = async (req, res) => {
 
 module.exports = {
     handleReceiverPage: handleReceiverPage,
+
+    getReceiverEditProfile: getReceiverEditProfile,
+    postReceiverEditProfile: postReceiverEditProfile,
+    getReceiverChangePassword: getReceiverChangePassword,
+    postReceiverChangePassword: postReceiverChangePassword,
+    deleteProfile: deleteProfile,
+
     getSearchPickupForm: getSearchPickupForm,
     showListOfPickup: showListOfPickup,
     sendMessage: sendMessage,

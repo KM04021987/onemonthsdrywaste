@@ -126,13 +126,13 @@ let updateDonorPassword = (data) => {
             })
         } 
         else {
-            reject(`New Password and Password Confirmation are not matching`);      
+            reject(`New Password and Password Confirmation are not matching. `);      
         }
     })
 };
 
 let deleteProfile = (id) => {
-    console.log('pickuprequestService: deleteProfile')
+    console.log('donorregisterService: deleteProfile')
     return new Promise(async (resolve, reject) => {
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;

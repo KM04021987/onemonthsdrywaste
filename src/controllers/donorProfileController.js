@@ -177,7 +177,9 @@ let deleteProfile = async (req, res) => {
     const donoraccount = req.params.id
     
     await donorregisterService.deleteProfile(donoraccount).then(() => {
-        return res.redirect("/dlogin")
+        req.session.destroy(function(err) {
+            return res.redirect("/");
+        });
     }).catch(error => {
         return res.render("donorprofilealert.ejs",{
             donoraccount: donoraccount,
