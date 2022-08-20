@@ -194,8 +194,16 @@ let deleteProfile = async (req, res) => {
 let getSearchPickupForm = async (req, res) => {
     console.log('receiverProfileController: getSearchPickupForm')
     const receiveraccount = req.params.id
+    const jsonData = JSON.stringify(req.user)
+    const jsonParseObj = JSON.parse(jsonData)
+    const country = jsonParseObj.COUNTRY
+    const state = jsonParseObj.STATE
+    const pin = jsonParseObj.PIN_OR_ZIP
     return res.render("receiversearchpickup.ejs", {
-        receiveraccount: receiveraccount
+        receiveraccount: receiveraccount,
+        receivercountry: country,
+        receiverstate: state,
+        receiverpin: pin
     })
 }
 
@@ -250,8 +258,16 @@ let sendMessage = async (req, res) => {
 let getSearchDonorsForm = async (req, res) => {
     console.log('receiverProfileController: getSearchDonorsForm')
     const receiveraccount = req.params.id
+    const jsonData = JSON.stringify(req.user)
+    const jsonParseObj = JSON.parse(jsonData)
+    const country = jsonParseObj.COUNTRY
+    const state = jsonParseObj.STATE
+    const pin = jsonParseObj.PIN_OR_ZIP
     return res.render("receiversearchdonorsnearme.ejs", {
-        receiveraccount: receiveraccount
+        receiveraccount: receiveraccount,
+        receivercountry: country,
+        receiverstate: state,
+        receiverpin: pin
     })
 }
 

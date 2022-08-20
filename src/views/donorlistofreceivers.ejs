@@ -61,9 +61,8 @@
 <div class="container">
 <div class="col-11 mx-auto">
         <br>
-        <form method="GET" action="/get-search-receivers-form/<%=donoraccount%>">
-            <button type="submit" class="btn btn-outline-info btn-sm">Search with Other Location</button>
-        </form>
+        <a style="font-weight: bold; text-decoration: underline; color: #007bff; font-size: 16px;" href="/get-search-receivers-form/<%=donoraccount%>">Search with Other Location</a>
+        <br>
         <br>
         <%
         if(userData.length!=0){
@@ -90,7 +89,7 @@
             <p style="font-size: 12px; font-weight: bold;">If you are interested to contact the Receiver, please send a note in the below description area, and click on "Send Message" Button.</p>
             <form method="POST" action="/send-message-to-receiver/<%=donoraccount%>">
               <div class="form-group">
-                  <textarea id="messageContent" name="messageContent" class="form-control" style="font-size: 12px;" placeholder="Type your message(Maximum 250 character)"></textarea>
+                  <textarea id="messageContent" name="messageContent" class="form-control" style="font-size: 12px;" maxlength="250" placeholder="Type your message(Maximum 250 character)"></textarea>
               </div>
               
               <input type="hidden" id="receiveraccount" name="receiveraccount" value="<%=data.ACCOUNT%>">
@@ -106,7 +105,7 @@
         </div>
         <%  i++; }) %>
         <% } else{ %>
-        <h5 colspan="7">There is no Dry-waste collector/Receiver near this location!</h5>
+        <h6 colspan="7">There is no Dry-waste collector/Receiver near this location!</h6>
         <% } %>
         <br>
         <br>

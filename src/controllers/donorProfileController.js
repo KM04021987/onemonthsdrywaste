@@ -443,8 +443,16 @@ let deletePickupById = async (req, res) => {
 let getSearchReceiversForm = async (req, res) => {
     console.log('donorProfileController: getSearchReceiversForm')
     const donoraccount = req.params.id
+    const jsonData = JSON.stringify(req.user)
+    const jsonParseObj = JSON.parse(jsonData)
+    const country = jsonParseObj.COUNTRY
+    const state = jsonParseObj.STATE
+    const pin = jsonParseObj.PIN_OR_ZIP
     return res.render("donorsearchreceiversnearme.ejs", {
-        donoraccount: donoraccount
+        donoraccount: donoraccount,
+        donorcountry: country,
+        donorstate: state,
+        donorpin: pin
     })
 }
 
