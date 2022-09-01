@@ -70,16 +70,18 @@
             var i=1;
             userData.forEach(function(data){
         %>
-        <button class="accordion">&nbsp;&nbsp;&nbsp;<%=data.FULLNAME%>[<%=data.CITY%>, <%=data.STATE%>]</button>
+        <button class="accordion">&nbsp;&nbsp;&nbsp;<%=data.FULLNAME%>&nbsp;[<%=data.CITY%>, <%=data.STATE%>]</button>
         <div class="panel">
             <div class="row">
                 <div class="col-sm-3" style="font-size: 12px; font-weight: bold;"><h7>Donor's Account:</h7></div>
                 <div class="col-sm-9" style="font-size: 12px;"><%=data.ACCOUNT%></div>
             </div>
+            <br>
             <div class="row">
                 <div class="col-sm-3" style="font-size: 12px; font-weight: bold;"><h7>Location:</h7></div>
                 <div class="col-sm-9" style="font-size: 12px;"><%=data.ADDRESS%><br><%=data.CITY%>, <%=data.STATE%><br><%=data.COUNTRY%> <%=data.PIN_OR_ZIP%></div>
             </div>
+            <br>
             <div class="row">
                 <div class="col-sm-3" style="font-size: 12px; font-weight: bold;"><h7>Contact Number</h7></div>
                 <div class="col-sm-9" style="font-size: 12px;"><%=data.PHONE_NO%></div>
