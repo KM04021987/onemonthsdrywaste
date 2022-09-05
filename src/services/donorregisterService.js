@@ -2,6 +2,7 @@ require('dotenv').config();
 import bcrypt from "bcryptjs";
 const ibmdb = require('ibm_db');
 let connStr = "DATABASE="+process.env.DB_DATABASE+";HOSTNAME="+process.env.DB_HOSTNAME+";PORT="+process.env.DB_PORT+";UID="+process.env.DB_UID+";PWD="+process.env.DB_PWD+";PROTOCOL=TCPIP;SECURITY=SSL";
+let nodeGeocoder = require('node-geocoder');
 
 let createNewUser = (data) => {
     console.log('donorregisterService: createNewUser')
@@ -14,16 +15,53 @@ let createNewUser = (data) => {
             // hash password
             let salt = bcrypt.genSaltSync(10);
             let pass = bcrypt.hashSync(data.password, salt);
+            let options = {
+                provider: 'openstreetmap'
+            };
+            let geoCoder = nodeGeocoder(options);
+
+            let fulladdress = data.state;
+            fulladdress += ', ';
+            fulladdress += data.country;
+            fulladdress += ', ';
+            fulladdress += data.pin;
+
+            geoCoder.geocode(fulladdress).then((res)=> {
+                let row = res[0];
+                const jsonData = JSON.stringify(row)
+                const removebracket1 = jsonData.replace('[','')
+                const removebracket2 = removebracket1.replace(']','')
+                const jsonParseobj = JSON.parse(removebracket2)
+                const dlatitude = jsonParseobj.latitude
+                const dlongitude = jsonParseobj.longitude
+                const dcountry = jsonParseobj.country
+                const dstate = jsonParseobj.state
+                const dpin = jsonParseobj.zipcode
+
+
             //create a new account
             ibmdb.open(connStr, function (err, conn) {
-                if (err) throw err;            
-                conn.query("INSERT INTO "+process.env.DB_SCHEMA+".donor_info (fullname, phone_no, country, state, city, pin_or_zip, address, password) values(?, ?, ?, ?, ?, ?, ?, ?);", [data.fullname, data.phone, data.country, data.state, data.city, data.pin, data.address,  pass], function(err, rows) {
+                if (err) throw err; 
+                if(dcountry === data.country && dstate === data.state && dpin === data.pin)  {        
+                conn.query("INSERT INTO "+process.env.DB_SCHEMA+".donor_info (fullname, phone_no, country, state, city, pin_or_zip, address, latitude, longitude, password) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", [data.fullname, data.phone, data.country, data.state, data.city, data.pin, data.address, dlatitude, dlongitude, pass], function(err, rows) {
                     if (err) {
                         reject(false)
                     }
                     resolve("Create a new donor user successful");
                 })
+                } else {
+                conn.query("INSERT INTO "+process.env.DB_SCHEMA+".donor_info (fullname, phone_no, country, state, city, pin_or_zip, address, password) values(?, ?, ?, ?, ?, ?, ?, ?);", [data.fullname, data.phone, data.country, data.state, data.city, data.pin, data.address, pass], function(err, rows) {
+                    if (err) {
+                        reject(false)
+                    }
+                    resolve("Create a new donor user successful");
+                })
+                }
             });
+        })
+        .catch((err)=> {
+            console.log(err);
+        });
         }
     });
 };
