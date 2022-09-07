@@ -40,7 +40,8 @@ let getChatListOfDonor = (donoraccount) => {
         try {
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
-                conn.query("SELECT DISTINCT(A.RECEIVER_ACCOUNT), B.FULLNAME FROM "+process.env.DB_SCHEMA+".message_info A INNER JOIN "+process.env.DB_SCHEMA+".RECEIVER_INFO B ON A.RECEIVER_ACCOUNT = B.ACCOUNT WHERE A.DONOR_ACCOUNT = ? with ur;", [donoraccount], function(err, rows) {
+                let count = process.env.FETCH_ROW_COUNT;
+                conn.query("SELECT DISTINCT(A.RECEIVER_ACCOUNT), B.FULLNAME FROM "+process.env.DB_SCHEMA+".message_info A INNER JOIN "+process.env.DB_SCHEMA+".RECEIVER_INFO B ON A.RECEIVER_ACCOUNT = B.ACCOUNT WHERE A.DONOR_ACCOUNT = ? fetch first ? rows only with ur;", [donoraccount, count], function(err, rows) {
                     if (err) {
                         console.log(err)
                         reject(err)
@@ -84,7 +85,8 @@ let getChatListOfReceiver = (receiveraccount) => {
         try {
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
-                conn.query("SELECT DISTINCT(A.DONOR_ACCOUNT), B.FULLNAME FROM "+process.env.DB_SCHEMA+".message_info A INNER JOIN "+process.env.DB_SCHEMA+".DONOR_INFO B ON A.DONOR_ACCOUNT = B.ACCOUNT WHERE A.RECEIVER_ACCOUNT = ? with ur;", [receiveraccount], function(err, rows) {
+                let count = process.env.FETCH_ROW_COUNT;
+                conn.query("SELECT DISTINCT(A.DONOR_ACCOUNT), B.FULLNAME FROM "+process.env.DB_SCHEMA+".message_info A INNER JOIN "+process.env.DB_SCHEMA+".DONOR_INFO B ON A.DONOR_ACCOUNT = B.ACCOUNT WHERE A.RECEIVER_ACCOUNT = ? fetch first ? rows only with ur;", [receiveraccount, count], function(err, rows) {
                     if (err) {
                         console.log(err)
                         reject(err)

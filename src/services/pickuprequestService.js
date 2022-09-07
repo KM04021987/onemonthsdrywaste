@@ -131,7 +131,8 @@ let extractPickupRequest = (donoraccount) => {
         try {
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
-                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE donor_account=? ORDER BY LAST_UPDATED_TS DESC with ur;", [donoraccount], function(err, rows) {
+                let count = process.env.FETCH_ROW_COUNT;
+                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE donor_account=? ORDER BY LAST_UPDATED_TS DESC fetch first ? rows only with ur;", [donoraccount, count], function(err, rows) {
                     if (err) {
                         console.log(err)
                         reject(err)
@@ -287,8 +288,9 @@ let getReceiverList = (findByInfo) => {
 
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
-                if(flatitude != null && flongitude != null)  {  
-                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".receiver_info WHERE (latitude >= ? and latitude <= ?) and (longitude >= ? and longitude <= ?)  with ur;", [minlat, maxlat, minlon, maxlon], function(err, rows) {
+                let count = process.env.FETCH_ROW_COUNT;
+                if(flatitude != null && flongitude != null)  { 
+                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".receiver_info WHERE (latitude >= ? and latitude <= ?) and (longitude >= ? and longitude <= ?)  fetch first ? rows only with ur;", [minlat, maxlat, minlon, maxlon, count], function(err, rows) {
                     if (err) {
                         console.log(err)
                         reject(err)
@@ -297,7 +299,7 @@ let getReceiverList = (findByInfo) => {
                     resolve(data);
                 })
                 } else {
-                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".receiver_info WHERE Country = ? and state = ? and PIN_OR_ZIP = ?  with ur;", [findByInfo.country, findByInfo.state, findByInfo.pin], function(err, rows) {
+                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".receiver_info WHERE Country = ? and state = ? and PIN_OR_ZIP = ?  fetch first ? rows only with ur;", [findByInfo.country, findByInfo.state, findByInfo.pin, count], function(err, rows) {
                     if (err) {
                         console.log(err)
                         reject(err)
@@ -350,8 +352,9 @@ let getPickupList = (RECEIVER_COUNTRY, RECEIVER_STATE, RECEIVER_PIN_OR_ZIP) => {
 
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
+                let count = process.env.FETCH_ROW_COUNT;
                 if(flatitude != null && flongitude != null)  {  
-                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE (donor_latitude >= ? and donor_latitude <= ?) and (donor_longitude >= ? and donor_longitude <= ?)  with ur;", [minlat, maxlat, minlon, maxlon], function(err, rows) {
+                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE (donor_latitude >= ? and donor_latitude <= ?) and (donor_longitude >= ? and donor_longitude <= ?)  fetch first ? rows only with ur;", [minlat, maxlat, minlon, maxlon, count], function(err, rows) {
                     if (err) {
                         console.log(err)
                         reject(err)
@@ -360,7 +363,7 @@ let getPickupList = (RECEIVER_COUNTRY, RECEIVER_STATE, RECEIVER_PIN_OR_ZIP) => {
                     resolve(data);
                 })
                 } else {
-                    conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE donor_Country = ? and donor_state = ? and donor_PIN_OR_ZIP = ?  ORDER BY LAST_UPDATED_TS DESC with ur;", [RECEIVER_COUNTRY, RECEIVER_STATE, RECEIVER_PIN_OR_ZIP], function(err, rows) {
+                    conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".pickup_request WHERE donor_Country = ? and donor_state = ? and donor_PIN_OR_ZIP = ?  ORDER BY LAST_UPDATED_TS DESC fetch first ? rows only with ur;", [RECEIVER_COUNTRY, RECEIVER_STATE, RECEIVER_PIN_OR_ZIP, count], function(err, rows) {
                         if (err) {
                             console.log(err)
                             reject(err)
@@ -413,8 +416,9 @@ let getDonorList = (findByInfo) => {
 
             ibmdb.open(connStr, function (err, conn) {
                 if (err) throw err;
+                let count = process.env.FETCH_ROW_COUNT; 
                 if(flatitude != null && flongitude != null)  {  
-                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".donor_info WHERE (latitude >= ? and latitude <= ?) and (longitude >= ? and longitude <= ?)  with ur;", [minlat, maxlat, minlon, maxlon], function(err, rows) {
+                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".donor_info WHERE (latitude >= ? and latitude <= ?) and (longitude >= ? and longitude <= ?)  fetch first ? rows only with ur;", [minlat, maxlat, minlon, maxlon, count], function(err, rows) {
                     if (err) {
                         console.log(err)
                         reject(err)
@@ -423,7 +427,7 @@ let getDonorList = (findByInfo) => {
                     resolve(data);
                 })
                 } else {
-                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".donor_info WHERE Country = ? and state = ? and PIN_OR_ZIP = ?  with ur;", [findByInfo.country, findByInfo.state, findByInfo.pin], function(err, rows) {
+                conn.query("SELECT * FROM "+process.env.DB_SCHEMA+".donor_info WHERE Country = ? and state = ? and PIN_OR_ZIP = ?  fetch first ? rows only with ur;", [findByInfo.country, findByInfo.state, findByInfo.pin, count], function(err, rows) {
                     if (err) {
                         console.log(err)
                         reject(err)
